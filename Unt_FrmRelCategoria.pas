@@ -1,0 +1,216 @@
+unit Unt_FrmRelCategoria;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Unt_Frame_Top,
+  Unt_Frame_Bottom, Data.DB, Vcl.Grids, Vcl.DBGrids, FIBDataSet, pFIBDataSet,
+  Vcl.Menus, ppProd, ppClass, ppReport, ppComm, ppRelatv, ppDB, ppDBPipe, ppVar,
+  ppCtrls, ppPrnabl, ppBands, ppCache, ppDesignLayer, ppParameter;
+
+type
+  TFrmRelCategoria = class(TForm)
+    pnlContainer: TPanel;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
+    FrameEdtPadrao: TFrameEdtPadrao;
+    DtsCategoria: TDataSource;
+    QryRelCategoria: TpFIBDataSet;
+    dblistagem: TDBGrid;
+    QryRelCategoriaCOD_FORMULA: TFIBIntegerField;
+    QryRelCategoriaNOME_FORMULA: TFIBStringField;
+    QryRelCategoriaDTUPDATE_FORMULA: TFIBDateTimeField;
+    FrameBtnPadrao: TFrameBtnPadrao;
+    PopRel: TPopupMenu;
+    Listagem1: TMenuItem;
+    pnlRel: TPanel;
+    ppDB: TppDBPipeline;
+    ppRel: TppReport;
+    ppParameterList1: TppParameterList;
+    ppDesignLayers1: TppDesignLayers;
+    ppDesignLayer1: TppDesignLayer;
+    ppHeaderBand1: TppHeaderBand;
+    ppDetailBand1: TppDetailBand;
+    ppFooterBand1: TppFooterBand;
+    ppLine1: TppLine;
+    ppLabel1: TppLabel;
+    ppDBText1: TppDBText;
+    ppLabel2: TppLabel;
+    ppDBText2: TppDBText;
+    ppLabel3: TppLabel;
+    ppDBText3: TppDBText;
+    ppLabel4: TppLabel;
+    ppSystemVariable1: TppSystemVariable;
+    procedure FrameBtnPadrao1pnlSairClick(Sender: TObject);
+    procedure FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure dblistagemCellClick(Column: TColumn);
+    procedure FrameBtnPadraopnlEditarClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure FormCreate(Sender: TObject);
+    procedure dblistagemDblClick(Sender: TObject);
+    procedure pnlRelClick(Sender: TObject);
+    procedure pnlRelMouseEnter(Sender: TObject);
+    procedure pnlRelMouseLeave(Sender: TObject);
+    procedure Listagem1Click(Sender: TObject);
+  private
+      var CodSelect : integer;
+  public
+    class Function New : TFrmRelCategoria;
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses Unt_DM, Unit_Funcoes, Unt_FrmCadCategoria;
+
+{ TFrmRelCategoria }
+
+procedure TFrmRelCategoria.dblistagemCellClick(Column: TColumn);
+begin
+    CodSelect := dblistagem. DataSource.DataSet.FieldByName('cod_formula').AsInteger;
+end;
+
+procedure TFrmRelCategoria.dblistagemDblClick(Sender: TObject);
+var _CadCategoria : TFrmCadCategoria;
+begin
+       if (CodSelect <> 0) then
+    begin
+      _CadCategoria := TFrmCadCategoria.New;
+      try
+        _CadCategoria.Codigo := CodSelect;
+        _CadCategoria.ShowModal;
+      finally
+        FreeAndNil(_CadCategoria);
+      end;
+    end
+    else
+    begin
+      ShowMessage('Selecione uma categoria');
+    end;
+end;
+
+procedure TFrmRelCategoria.FormCreate(Sender: TObject);
+begin
+  CodSelect := 0;
+end;
+
+procedure TFrmRelCategoria.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F5 then begin  // Verifica se a tecla pressionada é a tecla F5
+    Key := 0;
+    FrameBtnPadrao1pnlAtualizarClick(sender)
+  end
+  else if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
+procedure TFrmRelCategoria.FormShow(Sender: TObject);
+begin
+    FrameBtnPadrao.pnlAtualizar.OnClick(TFrmRelCategoria(sender));
+end;
+
+procedure TFrmRelCategoria.FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+var SqlWhere : String;
+begin
+   SqlWhere := '';
+   CodSelect := 0;
+   //verificação variáveis
+  if (FrameEdtPadrao.edtCod.Text <> '') then
+  begin
+     if (SqlWhere <> '') then
+     begin
+       SqlWhere := SqlWhere + ' AND ';
+       SqlWhere := SqlWhere + 'C.cod_formula in (' + FrameEdtPadrao.edtCod.Text + ')';
+     end
+     else
+     begin
+       SqlWhere := SqlWhere + 'C.cod_formula in (' + FrameEdtPadrao.edtCod.Text + ')';
+     end;
+
+  end;
+
+  if (FrameEdtPadrao.edtNome.Text <> '') then
+  begin
+      if (SqlWhere <> '') then
+      begin
+       SqlWhere := SqlWhere + ' AND ';
+       SqlWhere := SqlWhere + 'UPPER(C.nome_formula) LIKE ''%' + UpperCase(FrameEdtPadrao.edtNome.Text) + '%''';
+      end
+      else
+      begin
+        SqlWhere := SqlWhere + 'UPPER(C.nome_formula) LIKE ''%' + UpperCase(FrameEdtPadrao.edtNome.Text) + '%''';
+      end;
+  end;
+
+   QryRelCategoria.Close;
+   QryRelCategoria.SQL.Clear;
+   QryRelCategoria.SQL.Add('select * from formulas c');
+   if SqlWhere <> '' then
+   begin
+     QryRelCategoria.SQL.Add('Where '+ SqlWhere);
+   end;
+
+   QryRelCategoria.Open;
+
+
+
+
+end;
+
+procedure TFrmRelCategoria.FrameBtnPadrao1pnlSairClick(Sender: TObject);
+begin
+  close;
+end;
+
+procedure TFrmRelCategoria.FrameBtnPadraopnlEditarClick(Sender: TObject);
+var _CadCategoria : TFrmCadCategoria;
+begin
+           if (CodSelect <> 0) then
+    begin
+      _CadCategoria := TFrmCadCategoria.New;
+      try
+        _CadCategoria.Codigo := CodSelect;
+        _CadCategoria.ShowModal;
+      finally
+        FreeAndNil(_CadCategoria);
+      end;
+    end
+    else
+    begin
+      ShowMessage('Selecione uma categoria');
+    end;
+end;
+
+procedure TFrmRelCategoria.Listagem1Click(Sender: TObject);
+begin
+    ImprimirRelatorio(ppRel,'Rel_ListagemCategoria.rtm');
+end;
+
+class function TFrmRelCategoria.New: TFrmRelCategoria;
+begin
+    Result := TFrmRelCategoria.Create(nil);
+end;
+
+procedure TFrmRelCategoria.pnlRelClick(Sender: TObject);
+begin
+    PopRel.Popup(Mouse.CursorPos.X, Mouse.CursorPos.y);
+end;
+
+procedure TFrmRelCategoria.pnlRelMouseEnter(Sender: TObject);
+begin
+    SetBackgruondBotoes(Tpanel(Sender),clHighlight);
+end;
+
+procedure TFrmRelCategoria.pnlRelMouseLeave(Sender: TObject);
+begin
+    SetBackgruondBotoes(Tpanel(Sender),clSilver);
+end;
+
+end.

@@ -1,0 +1,163 @@
+unit Unt_FrmPrincipal;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.Menus, Vcl.Imaging.jpeg, Vcl.Imaging.pngimage;
+
+type
+  TFrmPrincipal = class(TForm)
+    PnlContainer: TPanel;
+    PnlTop: TPanel;
+    pnlGrupo: TPanel;
+    pnlCategoria: TPanel;
+    pnlSubGrupo: TPanel;
+    Menu: TMainMenu;
+    Relatrios1: TMenuItem;
+    relGrupos: TMenuItem;
+    Categorias1: TMenuItem;
+    Vendas1: TMenuItem;
+    Image1: TImage;
+    pnlTitulo: TPanel;
+    pnlBottom: TPanel;
+    SubGrupos1: TMenuItem;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+    procedure pnlGrupoClick(Sender: TObject);
+    procedure pnlCategoriaClick(Sender: TObject);
+    procedure Unt_FuncoesMouseEnter(Sender: TObject);
+    procedure Unt_FuncoesMouseLeave(Sender: TObject);
+    procedure pnlSubGrupoClick(Sender: TObject);
+    procedure relGruposClick(Sender: TObject);
+    procedure Categorias1Click(Sender: TObject);
+    procedure Vendas1Click(Sender: TObject);
+    procedure SubGrupos1Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+var
+  frmPrincipal: TfrmPrincipal;
+implementation
+
+uses
+  Unt_DM, Unt_FrmCadGrupo, Unt_FrmCadCategoria, Unit_Funcoes,
+  Unt_FrmCadSubGrupo, Unt_FrmRelGrupo, Unt_FrmRelCategoria, Unt_FrmRelVendas,
+  Unt_FrmRelSubGrupo;
+
+{$R *.dfm}
+procedure TFrmPrincipal.Categorias1Click(Sender: TObject);
+var
+  _RelCategorias : TFrmRelCategoria;
+begin
+  _RelCategorias := TFrmRelCategoria.New;
+  try
+    _RelCategorias.ShowModal;
+  finally
+    FreeAndNil(_RelCategorias);
+  end;
+end;
+
+procedure TFrmPrincipal.FormCreate(Sender: TObject);
+begin
+  DM := TDM.New;
+  try
+    DM.ConectarDB;
+  except
+    on E:Exception do begin
+      ShowMessage('Minha Mensagem...' + #13 + E.Message);
+    end;
+  end;
+end;
+
+procedure TFrmPrincipal.FormDestroy(Sender: TObject);
+begin
+  if Assigned(DM) then FreeAndNil(DM);
+end;
+
+procedure TFrmPrincipal.pnlCategoriaClick(Sender: TObject);
+var
+  _CadCategoria: TFrmCadCategoria;
+begin
+  _CadCategoria := TFrmCadCategoria.New;
+  try
+    _CadCategoria.ShowModal;
+  finally
+    FreeAndNil(_CadCategoria);
+  end;
+end;
+
+
+procedure TFrmPrincipal.pnlGrupoClick(Sender: TObject);
+var
+  _CadGrupo : TFrmCadGrupo;
+begin
+   _CadGrupo := TFrmCadGrupo.New;
+   try
+     _CadGrupo.ShowModal;
+   finally
+     FreeAndNil(_CadGrupo);
+   end;
+
+end;
+
+procedure TFrmPrincipal.pnlSubGrupoClick(Sender: TObject);
+var
+    _CadSubGrupo : TfrmCadSubGrupo;
+begin
+    _CadSubGrupo := TfrmCadSubGrupo.New;
+    try
+      _CadSubGrupo.ShowModal;
+    finally
+      FreeAndNil(_CadSubGrupo);
+    end;
+end;
+
+procedure TFrmPrincipal.relGruposClick(Sender: TObject);
+  var
+  _RelGrupos : TFrmRelGrupos;
+begin
+   _RelGrupos := TFrmRelGrupos.New;
+   try
+     _RelGrupos.ShowModal;
+   finally
+    FreeAndNil(_RelGrupos);
+   end;
+end;
+
+procedure TFrmPrincipal.SubGrupos1Click(Sender: TObject);
+var _RelSubGrupo : TFrmRelSubGrupo;
+begin
+  _RelSubGrupo := TFrmRelSubGrupo.New;
+  try
+    _RelSubGrupo.ShowModal;
+  finally
+    FreeAndNil(_RelSubGrupo);
+  end;
+end;
+
+procedure TFrmPrincipal.Unt_FuncoesMouseEnter(Sender: TObject);
+begin
+     SetBackgruondBotoes(TPanel(Sender), clHighlight);
+end;
+
+procedure TFrmPrincipal.Unt_FuncoesMouseLeave(Sender: TObject);
+begin
+    SetBackgruondBotoes(TPanel(Sender), clSilver);
+end;
+
+procedure TFrmPrincipal.Vendas1Click(Sender: TObject);
+var _RelVendas : TFrmRelVendas;
+begin
+  _RelVendas := TFrmRelVendas.New;
+  try
+    _RelVendas.ShowModal;
+  finally
+    FreeAndNil(_RelVendas);
+  end;
+end;
+
+end.

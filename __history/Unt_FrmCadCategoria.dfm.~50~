@@ -1,0 +1,244 @@
+object FrmCadCategoria: TFrmCadCategoria
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Cadastro de Categorias'
+  ClientHeight = 201
+  ClientWidth = 477
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCloseQuery = FormCloseQuery
+  OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object PnlContainer: TPanel
+    Left = 0
+    Top = 0
+    Width = 477
+    Height = 201
+    Align = alClient
+    BevelOuter = bvNone
+    Color = clWhite
+    ParentBackground = False
+    TabOrder = 0
+    object lblCod: TLabel
+      Left = 32
+      Top = 76
+      Width = 37
+      Height = 13
+      Caption = 'C'#243'digo:'
+    end
+    object Label1: TLabel
+      Left = 38
+      Top = 108
+      Width = 31
+      Height = 13
+      Caption = 'Nome:'
+    end
+    object PnlTop: TPanel
+      Left = 0
+      Top = 0
+      Width = 477
+      Height = 49
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Inserindo Categoria'
+      Color = clAppWorkSpace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentBackground = False
+      ParentFont = False
+      TabOrder = 0
+    end
+    object PnlBottom: TPanel
+      Left = 0
+      Top = 149
+      Width = 477
+      Height = 52
+      Align = alBottom
+      BevelOuter = bvNone
+      Color = clAppWorkSpace
+      ParentBackground = False
+      TabOrder = 1
+      object pnlGravar: TPanel
+        Left = 4
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Gravar <Ins>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 0
+        OnClick = pnlGravarClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlExcluir: TPanel
+        Left = 122
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Excluir <Del>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 1
+        OnClick = pnlExcluirClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlCancelar: TPanel
+        Left = 241
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Cancelar <Esc>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 2
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlSair: TPanel
+        Left = 358
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Sair <Esc>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = pnlSairClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+    end
+    object edtCodigo: TEdit
+      Left = 75
+      Top = 73
+      Width = 121
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 2
+      OnEnter = edtCodigoEnter
+      OnExit = edtCodigoExit
+      OnKeyPress = edtCodigoKeyPress
+    end
+    object edtNome: TDBEdit
+      Left = 75
+      Top = 105
+      Width = 286
+      Height = 21
+      DataField = 'NOME_FORMULA'
+      DataSource = DtsCategoria
+      TabOrder = 3
+    end
+  end
+  object QryCategoria: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE FORMULAS'
+      'SET '
+      '    NOME_FORMULA = :NOME_FORMULA,'
+      '    DTUPDATE_FORMULA = :DTUPDATE_FORMULA'
+      'WHERE'
+      '    COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    FORMULAS'
+      'WHERE'
+      '        COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    InsertSQL.Strings = (
+      'INSERT INTO FORMULAS('
+      '    COD_FORMULA,'
+      '    NOME_FORMULA,'
+      '    DTUPDATE_FORMULA'
+      ')'
+      'VALUES('
+      '    :COD_FORMULA,'
+      '    :NOME_FORMULA,'
+      '    :DTUPDATE_FORMULA'
+      ')')
+    RefreshSQL.Strings = (
+      'SELECT'
+      '    COD_FORMULA,'
+      '    NOME_FORMULA,'
+      '    DTUPDATE_FORMULA'
+      'FROM'
+      '    FORMULAS '
+      ''
+      ' WHERE '
+      '        FORMULAS.COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    SelectSQL.Strings = (
+      'select * from formulas'
+      'where(cod_formula = :COD)')
+    Transaction = DM.TransRead
+    Database = DM.DB
+    SQL.Strings = (
+      'select * from formulas'
+      'where(cod_formula = :COD)')
+    DefaultFormats.DisplayFormatTime = 'HH:MM'
+    Left = 288
+    Top = 56
+    object QryCategoriaCOD_FORMULA: TFIBIntegerField
+      FieldName = 'COD_FORMULA'
+    end
+    object QryCategoriaNOME_FORMULA: TFIBStringField
+      FieldName = 'NOME_FORMULA'
+      Size = 60
+      EmptyStrToNull = True
+    end
+    object QryCategoriaDTUPDATE_FORMULA: TFIBDateTimeField
+      FieldName = 'DTUPDATE_FORMULA'
+    end
+  end
+  object DtsCategoria: TDataSource
+    DataSet = QryCategoria
+    Left = 344
+    Top = 56
+  end
+end

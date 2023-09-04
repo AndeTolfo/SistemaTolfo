@@ -1,0 +1,50 @@
+unit Unit_Funcoes;
+
+interface
+  uses Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FIBDataSet, pFIBDataSet, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
+   Vcl.Mask, Vcl.DBCtrls,pFIBQuery,
+  System.UITypes;
+
+ procedure SetBackgruondBotoes(iPanel: TPanel; iColor: TColor);
+  procedure LimparCamposEdit(Formulario: TForm);
+ function GetNexId(const TableName, FieldName, Condition: string; Qry : TpFIBQuery):Integer;
+implementation
+
+
+ procedure SetBackgruondBotoes(iPanel: TPanel; iColor: TColor);
+ begin
+      iPanel.Color := iColor;
+ end;
+
+ function GetNexId(const TableName, FieldName, Condition: string; Qry : TpFIBQuery):Integer;
+ begin
+ try
+      Qry.SQL.Clear;
+      Qry.SQL.Text := 'execute procedure get_next_id(:pTabela,:pCampo,:pCondicao,1)';
+      Qry.ParamByName('pTabela').AsString := TableName;
+      Qry.ParamByName('pCampo').AsString := FieldName;
+      Qry.ParamByName('pCondicao').AsString := Condition;
+      Qry.ExecQuery;
+    // Obtém o valor retornado pela procedure
+    Result := Qry.Fields[0].AsInteger;
+  finally
+    Qry.Close;
+  end;
+end;
+
+procedure LimparCamposEdit(Formulario: TForm);
+var
+  i: Integer;
+begin
+  for i := 0 to Formulario.ComponentCount - 1 do
+  begin
+    if Formulario.Components[i] is TEdit then
+      TEdit(Formulario.Components[i]).Text := '';
+  end;
+end;
+
+
+
+
+end.

@@ -1,0 +1,249 @@
+object FrmCadCategoria: TFrmCadCategoria
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Cadastro de Categorias'
+  ClientHeight = 181
+  ClientWidth = 411
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnCloseQuery = FormCloseQuery
+  OnKeyDown = FormKeyDown
+  OnKeyPress = FormKeyPress
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object PnlContainer: TPanel
+    Left = 0
+    Top = 0
+    Width = 411
+    Height = 181
+    Align = alClient
+    BevelOuter = bvNone
+    Color = clWhite
+    ParentBackground = False
+    TabOrder = 0
+    ExplicitWidth = 477
+    ExplicitHeight = 201
+    object lblCod: TLabel
+      Left = 6
+      Top = 65
+      Width = 39
+      Height = 13
+      Caption = 'C'#243'digo:'
+    end
+    object Label1: TLabel
+      Left = 12
+      Top = 97
+      Width = 33
+      Height = 13
+      Caption = 'Nome:'
+    end
+    object PnlTop: TPanel
+      Left = 0
+      Top = 0
+      Width = 411
+      Height = 49
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Inserindo Categoria'
+      Color = clAppWorkSpace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentBackground = False
+      ParentFont = False
+      TabOrder = 0
+      ExplicitWidth = 477
+    end
+    object PnlBottom: TPanel
+      Left = 0
+      Top = 129
+      Width = 411
+      Height = 52
+      Align = alBottom
+      BevelOuter = bvNone
+      Color = clAppWorkSpace
+      ParentBackground = False
+      TabOrder = 1
+      ExplicitTop = 149
+      ExplicitWidth = 477
+      object pnlGravar: TPanel
+        Left = 4
+        Top = 7
+        Width = 98
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Gravar <Ins>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 0
+        OnClick = pnlGravarClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlExcluir: TPanel
+        Left = 105
+        Top = 7
+        Width = 98
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Excluir <Del>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 1
+        OnClick = pnlExcluirClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlCancelar: TPanel
+        Left = 206
+        Top = 7
+        Width = 98
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Cancelar '
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 2
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+      object pnlSair: TPanel
+        Left = 307
+        Top = 7
+        Width = 98
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Sair <Esc>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = pnlSairClick
+        OnMouseEnter = pnlGravarMouseEnter
+        OnMouseLeave = pnlGravarMouseLeave
+      end
+    end
+    object edtCodigo: TEdit
+      Left = 49
+      Top = 62
+      Width = 123
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 2
+      OnEnter = edtCodigoEnter
+      OnExit = edtCodigoExit
+      OnKeyPress = edtCodigoKeyPress
+    end
+    object edtNome: TDBEdit
+      Left = 49
+      Top = 94
+      Width = 320
+      Height = 21
+      DataField = 'NOME_FORMULA'
+      DataSource = DtsCategoria
+      TabOrder = 3
+    end
+  end
+  object QryCategoria: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE FORMULAS'
+      'SET '
+      '    NOME_FORMULA = :NOME_FORMULA,'
+      '    DTUPDATE_FORMULA = :DTUPDATE_FORMULA'
+      'WHERE'
+      '    COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    FORMULAS'
+      'WHERE'
+      '        COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    InsertSQL.Strings = (
+      'INSERT INTO FORMULAS('
+      '    COD_FORMULA,'
+      '    NOME_FORMULA,'
+      '    DTUPDATE_FORMULA'
+      ')'
+      'VALUES('
+      '    :COD_FORMULA,'
+      '    :NOME_FORMULA,'
+      '    :DTUPDATE_FORMULA'
+      ')')
+    RefreshSQL.Strings = (
+      'SELECT'
+      '    COD_FORMULA,'
+      '    NOME_FORMULA,'
+      '    DTUPDATE_FORMULA'
+      'FROM'
+      '    FORMULAS '
+      ''
+      ' WHERE '
+      '        FORMULAS.COD_FORMULA = :OLD_COD_FORMULA'
+      '    ')
+    SelectSQL.Strings = (
+      'select * from formulas'
+      'where(cod_formula = :COD)')
+    Transaction = DM.TransRead
+    Database = DM.DB
+    SQL.Strings = (
+      'select * from formulas'
+      'where(cod_formula = :COD)')
+    DefaultFormats.DisplayFormatTime = 'HH:MM'
+    Left = 288
+    Top = 56
+    object QryCategoriaCOD_FORMULA: TFIBIntegerField
+      FieldName = 'COD_FORMULA'
+    end
+    object QryCategoriaNOME_FORMULA: TFIBStringField
+      FieldName = 'NOME_FORMULA'
+      Size = 60
+      EmptyStrToNull = True
+    end
+    object QryCategoriaDTUPDATE_FORMULA: TFIBDateTimeField
+      FieldName = 'DTUPDATE_FORMULA'
+    end
+  end
+  object DtsCategoria: TDataSource
+    DataSet = QryCategoria
+    Left = 344
+    Top = 56
+  end
+end

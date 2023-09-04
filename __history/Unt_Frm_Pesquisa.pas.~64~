@@ -1,0 +1,239 @@
+unit Unt_Frm_Pesquisa;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, Vcl.Grids,
+  Vcl.DBGrids, FIBDataSet, pFIBDataSet, Unt_Frame_Top, Unt_Frame_Bottom;
+
+type
+  TFrmPesquisa = class(TForm)
+    pnlContainer: TPanel;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
+    QryPesquisa: TpFIBDataSet;
+    DtsPesquisa: TDataSource;
+    dbListagem: TDBGrid;
+    FrameEdtPadrao1: TFrameEdtPadrao;
+    FrameBtnPadrao1: TFrameBtnPadrao;
+    procedure FrameBtnPadrao1pnlAtualizarMouseLeave(Sender: TObject);
+    procedure FrameBtnPadrao1pnlSairClick(Sender: TObject);
+    procedure FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+    procedure dbListagemDblClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    Cod_Selected : integer;
+    Nome_Cliente : String;
+    Tabela : String;
+    Class Function New : TFrmPesquisa;
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses Unit_Funcoes, Unt_DM, Unt_FrmRelVendas;
+
+procedure TFrmPesquisa.dbListagemDblClick(Sender: TObject);
+begin
+  if (Tabela = 'Clientes') then
+  begin
+    Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_cliente').AsInteger;
+    Nome_Cliente := DtsPesquisa.DataSet.FieldByName('nome_cliente').AsString;
+    if (Cod_Selected <> 0) then
+    begin
+        ModalResult := mrOk;
+    end;
+  end
+  else if (Tabela = 'Cidades') then
+  begin
+    Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_cidade').AsInteger;
+    if (Cod_Selected <> 0) then
+    begin
+      ModalResult := mrOk
+    end;
+  end
+
+  else if (Tabela = 'CondicaoPagamento') then
+  begin
+    Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_formaspg').AsInteger;
+    if (Cod_Selected <> 0) then
+    begin
+      ModalResult := mrOk;
+    end;
+  end;
+
+end;
+
+procedure TFrmPesquisa.FormCreate(Sender: TObject);
+begin
+  Cod_Selected := 0;
+end;
+
+procedure TFrmPesquisa.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F5 then begin  // Verifica se a tecla pressionada é a tecla F5
+    Key := 0;
+    FrameBtnPadrao1pnlAtualizarClick(sender)
+  end
+else if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
+procedure TFrmPesquisa.FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+var SqlWhere : String;
+begin
+  SqlWhere := '';
+  QryPesquisa.Close;
+  QryPesquisa.SQL.Clear;
+
+
+ // PARÂMETROS CLIENTES
+  if (Tabela = 'Clientes') then
+  begin
+     if (FrameEdtPadrao1.edtCod.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'c.cod_cliente in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'c.cod_cliente in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end;
+     end;
+
+     if (FrameEdtPadrao1.edtNome.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'UPPER(c.nome_cliente) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'UPPER(c.nome_cliente) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end;
+     end;
+    QryPesquisa.SQL.Add('select c.cod_cliente, c.nome_cliente from clientes c');
+    if SqlWhere <> '' then
+    begin
+      QryPesquisa.SQL.Add('Where ' + SqlWhere + ' and c.cod_cliente > 0 ORDER BY 1');
+    end
+    else QryPesquisa.SQL.Add('Where c.cod_cliente > 0 ORDER BY 1');
+  end
+
+
+ // PARÂMETROS CIDADES
+  else if (tabela = 'Cidades') then
+  begin
+     if (FrameEdtPadrao1.edtCod.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'c.cod_cidade in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'c.cod_cidade in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end;
+     end;
+
+     if (FrameEdtPadrao1.edtNome.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'UPPER(c.nome_cidade) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'UPPER(c.nome_cidade) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end;
+     end;
+    //monta relatório cidades
+    QryPesquisa.SQL.Add('select c.cod_cidade, c.nome_cidade, c.uf_cidade from cidades c');
+
+    if SqlWhere <> '' then
+    begin
+      QryPesquisa.SQL.Add('Where ' + SqlWhere + ' and c.cod_cidade > 0 ORDER BY 1');
+    end
+    else QryPesquisa.SQL.Add('Where c.cod_cidade > 0 ORDER BY 1');
+  end
+
+
+  // Parâmetros condições de pagamento
+  else if (tabela = 'CondicaoPagamento') then
+  begin
+     if (FrameEdtPadrao1.edtCod.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'c.cod_formaspg in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'c.cod_formaspg in (' + FrameEdtPadrao1.edtCod.Text + ')';
+        end;
+     end;
+
+     if (FrameEdtPadrao1.edtNome.Text <> '') then
+     begin
+        if (SqlWhere <> '') then
+        begin
+            SqlWhere := SqlWhere + ' AND ';
+            SqlWhere := SqlWhere + 'UPPER(c.descricao_formaspg) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end
+        else
+        begin
+            SqlWhere := SqlWhere + 'UPPER(c.descricao_formaspg) LIKE ''%' + UPPERCASE(FrameEdtPadrao1.edtNome.Text) + '%''';
+        end;
+     end;
+    //monta relatório condições pagamento
+    QryPesquisa.SQL.Add('select c.cod_formaspg, c.descricao_formaspg from formaspg c');
+
+    if SqlWhere <> '' then
+    begin
+      QryPesquisa.SQL.Add('Where ' + SqlWhere + ' and c.cod_formaspg > 0 ORDER BY 1');
+    end
+    else QryPesquisa.SQL.Add('Where c.cod_formaspg > 0 ORDER BY 1');
+  end
+  else
+  begin
+    ShowMessage('Tabela de Pesquisa não Definida');
+    exit
+  end;
+
+
+  QryPesquisa.Open;
+
+end;
+
+procedure TFrmPesquisa.FrameBtnPadrao1pnlAtualizarMouseLeave(Sender: TObject);
+begin
+  FrameBtnPadrao1.pnlAtualizarMouseLeave(Sender);
+
+end;
+
+procedure TFrmPesquisa.FrameBtnPadrao1pnlSairClick(Sender: TObject);
+begin
+close;
+end;
+
+class function TFrmPesquisa.New: TFrmPesquisa;
+begin
+  result := TFrmPesquisa.Create(nil);
+end;
+
+end.

@@ -1,0 +1,349 @@
+unit Unt_FrmPdv;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
+  Vcl.WinXPickers, Vcl.ComCtrls, Vcl.Buttons, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  FIBDataSet, pFIBDataSet, Datasnap.DBClient;
+
+type
+  TFrmTelaPdv = class(TForm)
+    pnlContainer: TPanel;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
+    pnlVendedor: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    pnlHorário: TPanel;
+    dthora: TLabel;
+    Timer: TTimer;
+    Label3: TLabel;
+    pnlSeparador: TPanel;
+    pnlDelimitador: TPanel;
+    Label4: TLabel;
+    edtCodClient: TEdit;
+    btnCliente: TSpeedButton;
+    edtNomeCliente: TEdit;
+    btnEdtCliente: TSpeedButton;
+    pnlProdutos: TPanel;
+    delimitador: TPanel;
+    Panel1: TPanel;
+    Label5: TLabel;
+    edtCodProduto: TEdit;
+    edtNomeProduto: TEdit;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    dbListagem: TDBGrid;
+    Panel2: TPanel;
+    Label6: TLabel;
+    edtQuant: TEdit;
+    Label7: TLabel;
+    EdtPrecoUnit: TEdit;
+    Label8: TLabel;
+    EdtSubTotal: TEdit;
+    Label9: TLabel;
+    edtEstoqueDisp: TEdit;
+    DtsProdutos: TDataSource;
+    CDSProdutos: TClientDataSet;
+    CDSProdutosN: TIntegerField;
+    CDSProdutosCod_Produto: TIntegerField;
+    CDSProdutosNome_Produto: TStringField;
+    CDSProdutosQTD: TFloatField;
+    CDSProdutosPR_Unit: TFloatField;
+    CDSProdutosSubTotal: TFloatField;
+    CDSProdutosTotalFinal: TFloatField;
+    procedure FormShow(Sender: TObject);
+    procedure TimerTimer(Sender: TObject);
+    procedure btnClienteClick(Sender: TObject);
+    procedure Find(tabela : String ; TipoPesquisa: string);
+    procedure edtQuantChange(Sender: TObject);
+    procedure EdtPrecoUnitChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edtCodClientKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure EdtSubTotalEnter(Sender: TObject);
+    procedure edtCodClientKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCodProdutoKeyPress(Sender: TObject; var Key: Char);
+    procedure EdtSubTotalKeyPress(Sender: TObject; var Key: Char);
+    procedure edtQuantKeyPress(Sender: TObject; var Key: Char);
+    procedure EdtPrecoUnitKeyPress(Sender: TObject; var Key: Char);
+  private
+     var contador : integer;{ Private declarations }
+  public
+    Class Function New : TFrmTelaPdv;
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses Unit_Funcoes, Unt_Frm_Pesquisa, Unt_DM;
+
+{ TFrmTelaPdv }
+
+procedure TFrmTelaPdv.btnClienteClick(Sender: TObject);
+var
+_Pesquisa : TFrmPesquisa;
+begin
+  _Pesquisa := TFrmPesquisa.New;
+  try
+     _Pesquisa.Tabela := 'Clientes';
+     _Pesquisa.Caption := 'Pesquisa por Clientes';
+     if _Pesquisa.ShowModal = mrOk then
+     begin
+       if _Pesquisa.Cod_Selected <> 0 then
+       begin
+         if edtCodClient.Text = '' then
+         begin
+           edtCodClient.Text := _Pesquisa.Cod_Selected.ToString;
+           edtNomeCliente.Text := _Pesquisa.Nome_Cliente;
+         end
+         else
+         begin
+           edtCodClient.Text := _Pesquisa.Cod_Selected.ToString;
+           edtNomeCliente.Text := _Pesquisa.Nome_Cliente;
+         end;
+       end;
+     end;
+  finally
+    FreeAndNil(_Pesquisa);
+  end;
+end;
+
+procedure TFrmTelaPdv.edtCodClientKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+  var _PesquisaCliente : TFrmPesquisa;
+begin
+  if Key = VK_F3 then
+  begin
+    try
+    _PesquisaCliente := TFrmPesquisa.New;
+    _PesquisaCliente.Tabela := 'Clientes';
+    _PesquisaCliente.Caption := 'Pesquisa por Clientes';
+      if edtCodClient.Text = '' then
+      begin
+        _PesquisaCliente.ShowModal;
+      end
+      else
+      begin
+        _PesquisaCliente.FrameEdtPadrao1.edtCod.Text := edtCodClient.Text;
+        _PesquisaCliente.ShowModal;
+      end;
+    finally
+     FreeAndNil(_PesquisaCliente);
+    end;
+
+  end;
+end;
+
+procedure TFrmTelaPdv.edtCodClientKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    key := #0;
+    if edtCodClient.Text = '' then
+    begin
+      ShowMessage('Código em branco');
+    end
+    else
+    begin
+      Find('Clientes','COD');
+     if edtNomeCliente.Text <> '' then
+      begin
+      edtCodProduto.SetFocus;
+      end;
+    end;
+  end;
+end;
+
+procedure TFrmTelaPdv.edtCodProdutoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    key := #0;
+    if edtCodProduto.Text = '' then
+    begin
+      ShowMessage('Código em branco');
+    end
+    else
+    begin
+      Find('Produtos','COD');
+     if edtNomeProduto.Text <> '' then
+      begin
+      edtQuant.SetFocus;
+      end;
+    end;
+  end;
+end;
+
+procedure TFrmTelaPdv.EdtPrecoUnitChange(Sender: TObject);
+var Qtd,PrecoUni : Double;
+begin
+    if (edtQuant.Text <> '') and (EdtPrecoUnit.Text <> '') then
+      begin
+      if (strtofloat(edtQuant.Text) > 0) and (strtofloat(EdtPrecoUnit.Text) > 0) then
+         begin
+          Qtd := strtofloat(edtQuant.Text);
+          PrecoUni := strtofloat(EdtPrecoUnit.Text);
+          EdtSubTotal.Text := (Qtd * PrecoUni).ToString;
+         end;
+      end;
+end;
+
+procedure TFrmTelaPdv.EdtPrecoUnitKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    key := #0;
+   if strtofloat(EdtPrecoUnit.Text) <> 0 then
+   begin
+     EdtSubTotal.SetFocus;
+   end;
+  end;
+end;
+
+procedure TFrmTelaPdv.edtQuantChange(Sender: TObject);
+var Qtd,PrecoUni : Double;
+begin
+    if (edtQuant.Text <> '') and (EdtPrecoUnit.Text <> '') then
+      begin
+      if (strtofloat(edtQuant.Text) > 0) and (strtofloat(EdtPrecoUnit.Text) > 0) then
+         begin
+          Qtd := strtofloat(edtQuant.Text);
+          PrecoUni := strtofloat(EdtPrecoUnit.Text);
+
+          EdtSubTotal.Text := (Qtd * PrecoUni).ToString;
+         end;
+      end;
+end;
+
+procedure TFrmTelaPdv.edtQuantKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    key := #0;
+   if strtofloat(edtQuant.Text) <> 0 then
+   begin
+     EdtPrecoUnit.SetFocus;
+   end;
+  end;
+end;
+
+procedure TFrmTelaPdv.EdtSubTotalEnter(Sender: TObject);
+begin
+  KeyPreview := False;
+end;
+
+procedure TFrmTelaPdv.EdtSubTotalKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+
+    CDSProdutos.DisableControls;
+    cdsProdutos.Append;
+    cdsProdutos.FieldByName('N°').AsInteger := Contador;
+    cdsProdutos.FieldByName('COD_Produto').AsInteger := strtoint(edtCodProduto.Text);
+    cdsProdutos.FieldByName('Nome_Produto').AsString := edtNomeProduto.Text;
+    cdsProdutos.FieldByName('QTD').AsFloat := strtofloat(edtQuant.Text);
+    cdsProdutos.FieldByName('PR_UNIT').AsFloat := strtofloat(EdtPrecoUnit.Text);
+    cdsProdutos.FieldByName('SubTotal').AsFloat := strtofloat(EdtSubTotal.Text);
+    CDSProdutos.FieldByName('TotalFinal').AsFloat := StrToFloat(EdtSubTotal.Text);
+    contador := Contador + 1;
+    CDSProdutos.EnableControls;
+    edtCodProduto.SetFocus;
+    if Key = #13 then
+      begin
+      Key := #0;
+      if strtofloat(EdtSubTotal.Text) <> 0 then
+        begin
+            edtCodProduto.Text := '';
+            edtNomeProduto.Text := '';
+            EdtPrecoUnit.Text := '';
+            edtQuant.Text := '';
+            EdtSubTotal.Text := '';
+            edtCodProduto.SetFocus;
+        end;
+      end;
+  end;
+end;
+
+procedure TFrmTelaPdv.Find(tabela : String ; TipoPesquisa: string);
+var _QryPesquisa : TpFIBDataSet;
+begin
+    _QryPesquisa := DM.GetNewQry;
+  try
+    _QryPesquisa.Close;
+    _QryPesquisa.SQL.Clear;
+    if (tabela = 'Clientes' ) then
+    begin
+      _QryPesquisa.SQL.Add('Select c.cod_cliente, c.nome_cliente from Clientes c');
+      if (TipoPesquisa = 'COD') then
+      begin
+      _QryPesquisa.SQL.Add('Where C.Cod_Cliente = :pCod');
+      _QryPesquisa.ParamByName('pCod').AsInteger := strtoint(edtCodClient.Text);
+      _QryPesquisa.Open;
+       if not _QryPesquisa.IsEmpty then
+        begin
+         edtCodClient.Text := _QryPesquisa.FieldByName('Cod_Cliente').AsString;
+         edtNomeCliente.Text := _QryPesquisa.FieldbyName('Nome_cliente').AsString;
+         end
+       else
+        begin
+         ShowMessage('Cliente não encontrado');
+         exit
+        end;
+      end;
+    end
+    else if (tabela = 'Produtos' ) then
+    begin
+    _QryPesquisa.SQL.Add('Select p.cod_produto, p.nome_produto, p.estoque_produto, p.prvenda_produto from Produtos p');
+      if (TipoPesquisa = 'COD') then
+      begin
+        _QryPesquisa.SQL.Add('Where p.cod_produto = :pCod');
+        _QryPesquisa.ParamByName('pCod').AsInteger := strtoint(edtCodProduto.Text);
+        _QryPesquisa.Open;
+       if not _QryPesquisa.IsEmpty then
+       begin
+         edtCodProduto.Text := _QryPesquisa.FieldByName('Cod_Produto').AsString;
+         edtNomeProduto.Text := _QryPesquisa.FieldbyName('Nome_Produto').AsString;
+         edtEstoqueDisp.Text := _QryPesquisa.FieldByName('estoque_produto').AsString;
+         EdtPrecoUnit.Text := _QryPesquisa.FieldByName('prvenda_produto').AsString;
+         edtQuant.Text := '1';
+       end
+       else
+       begin
+         ShowMessage('Produto não encontrado');
+         exit
+       end;
+       end;
+    end;
+  finally
+   FreeAndNil(_QryPesquisa);
+  end;
+
+
+end;
+
+procedure TFrmTelaPdv.FormCreate(Sender: TObject);
+begin
+  contador := 1;
+end;
+
+procedure TFrmTelaPdv.FormShow(Sender: TObject);
+begin
+   DtHora.Caption := FormatDateTime('hh:mm:ss', Now);
+end;
+
+class function TFrmTelaPdv.New: TFrmTelaPdv;
+begin
+    result := TFrmTelaPdv.Create(nil);
+end;
+
+procedure TFrmTelaPdv.TimerTimer(Sender: TObject);
+begin
+  DtHora.Caption := FormatDateTime('hh:mm:ss', Now);
+end;
+
+end.

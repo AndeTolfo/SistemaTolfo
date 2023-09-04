@@ -1,0 +1,214 @@
+unit Unt_FrmCadSubGrupo;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Data.DB, FIBDataSet,
+  pFIBDataSet, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, FIBQuery, pFIBQuery;
+
+type
+  TfrmCadSubGrupo = class(TForm)
+    pnlContainer: TPanel;
+    pnlTop: TPanel;
+    pnlBottom: TPanel;
+    QrySubgrupo: TpFIBDataSet;
+    DtsSubGrupo: TDataSource;
+    lblCod: TLabel;
+    edtCodigo: TEdit;
+    edtNome: TDBEdit;
+    Label1: TLabel;
+    Label2: TLabel;
+    QrySubgrupoCOD_SUBCLASSE: TFIBIntegerField;
+    QrySubgrupoCODCLASSE_SUBCLASSE: TFIBIntegerField;
+    QrySubgrupoNOME_SUBCLASSE: TFIBStringField;
+    QrySubgrupoDTUPDATE_SUBCLASSE: TFIBDateTimeField;
+    QrySubgrupoIDSITE_SUBCLASSE: TFIBStringField;
+    pnlGravar: TPanel;
+    pnlExcluir: TPanel;
+    pnlCancelar: TPanel;
+    pnlSair: TPanel;
+    DBLookupComboBox1: TDBLookupComboBox;
+    QryGrupo: TpFIBDataSet;
+    DtsGrupo: TDataSource;
+    QryGrupoNOME_CLASSE: TFIBStringField;
+    QryGrupoCOD_CLASSE: TFIBIntegerField;
+    QryGrupoDESCRICAO_CLASSE: TFIBStringField;
+    QryGrupoDTUPDATE_CLASSE: TFIBDateTimeField;
+    QryGrupoIDSITE_CLASSE: TFIBStringField;
+    procedure pnlSairClick(Sender: TObject);
+    procedure pnlGravarClick(Sender: TObject);
+    procedure edtCodigoEnter(Sender: TObject);
+    procedure edtCodigoExit(Sender: TObject);
+    procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
+    procedure FormShow(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure pnlCancelarMouseEnter(Sender: TObject);
+    procedure pnlCancelarMouseLeave(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    FCodigo : integer;
+    function GetCodigo: Integer;
+    procedure SetCodigo(const Value: Integer);
+  public
+   class function New : TfrmCadSubGrupo;
+   procedure Find;
+   property Codigo: Integer read GetCodigo write SetCodigo;
+  end;
+
+implementation
+
+{$R *.dfm}
+
+uses Unt_DM, pFIBDatabase, Unit_Funcoes;
+
+{ TfrmCadSubGrupo }
+
+procedure TfrmCadSubGrupo.edtCodigoEnter(Sender: TObject);
+begin
+    KeyPreview := false;
+end;
+
+
+procedure TfrmCadSubGrupo.edtCodigoExit(Sender: TObject);
+begin
+  KeyPreview := true;
+end;
+
+function TFrmCadSubGrupo.GetCodigo: Integer;
+begin
+  Result := FCodigo;
+end;
+
+procedure TFrmCadSubGrupo.SetCodigo(const Value: Integer);
+begin
+  if (Value < 0) then raise Exception.Create('Não é Permitido Valores Negativos!');
+
+  FCodigo := Value;
+end;
+
+
+procedure TfrmCadSubGrupo.edtCodigoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (key = #13) then
+  begin
+    key := #0;
+    FCodigo := StrToIntDef(edtCodigo.Text,0);
+     if (FCodigo = 0) then
+     begin
+       edtCodigo.Text := 'Automático';
+       edtCodigo.Modified := false;
+       if (QrySubgrupo.State <> DsInsert ) then Find
+       else edtNome.SetFocus;
+     end else if (edtCodigo.Modified) then begin
+       edtCodigo.Modified := false;
+       Find;
+     end else edtNome.SetFocus;
+  end;
+end;
+
+procedure TfrmCadSubGrupo.Find;
+begin
+  QrySubGrupo.Close;
+  QrySubGrupo.ParamByName('COD').AsInteger := FCodigo;
+  QrySubGrupo.Open;
+
+  if QrySubGrupo.IsEmpty then
+  begin
+    PnlTop.Caption := 'Inserindo um Novo Grupo';
+    QrySubGrupo.Insert;
+  end else begin
+    PnlTop.Caption := 'Alterando o Grupo ' + FCodigo.ToString;
+    QrySubGrupo.Edit;
+    EdtCodigo.Text := FCodigo.ToString;
+  end;
+end;
+
+procedure TfrmCadSubGrupo.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+ QryGrupo.Close;
+end;
+
+procedure TfrmCadSubGrupo.FormCreate(Sender: TObject);
+begin
+  FCodigo := 0;
+  QryGrupo.SQL.Clear;
+  QryGrupo.SQL.Add('select * from classes c order by 1');
+  QryGrupo.Open;
+end;
+
+
+
+procedure TfrmCadSubGrupo.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
+
+procedure TfrmCadSubGrupo.FormShow(Sender: TObject);
+begin
+  Find;
+end;
+
+class function TfrmCadSubGrupo.New: TfrmCadSubGrupo;
+begin
+      result := TfrmCadSubGrupo.Create(nil);
+end;
+
+procedure TfrmCadSubGrupo.pnlCancelarMouseEnter(Sender: TObject);
+begin
+    SetBackgruondBotoes(TPanel(sender), clHighlight);
+end;
+
+procedure TfrmCadSubGrupo.pnlCancelarMouseLeave(Sender: TObject);
+begin
+      SetBackgruondBotoes(TPanel(sender), clSilver);
+end;
+
+procedure TfrmCadSubGrupo.pnlGravarClick(Sender: TObject);
+var
+  _Transation : TpFIBTransaction;
+begin
+  _Transation := Dm.GetNewTransaction;
+  try
+    QrySubgrupo.UpdateTransaction := _Transation;
+    try
+      QrySubgrupo.UpdateTransaction.StartTransaction;
+      if (QrySubgrupo.State = dsInsert) then
+      begin
+         if edtCodigo.Text = 'Automático' then
+         begin
+           QrySubgrupoCOD_SUBCLASSE.AsInteger := GetNexId('subclasse','cod_subclasse','',DM.QryGen);
+         end
+         else
+          QrySubgrupoCOD_SUBCLASSE.AsInteger := StrToInt(edtCodigo.Text);
+
+      end;
+      QrySubgrupo.Post;
+      QrySubgrupo.UpdateTransaction.Commit;
+      edtCodigo.Text := '';
+      FCodigo := 0;
+      Find;
+      except
+      on E:Exception  do begin
+        if QrySubGrupo.UpdateTransaction.InTransaction then QrySubGrupo.UpdateTransaction.Rollback;
+        ShowMessage('Ocorreu um Erro ao Gravar o SubGrupo!' + #13 + 'Erro: ' + E.Message);
+      end;
+    end
+  finally
+    FreeAndNil(_Transation);
+  end;
+end;
+
+procedure TfrmCadSubGrupo.pnlSairClick(Sender: TObject);
+begin
+close;
+end;
+
+end.

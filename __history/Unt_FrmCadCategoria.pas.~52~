@@ -1,0 +1,233 @@
+unit Unt_FrmCadCategoria;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, FIBDataSet, pFIBDataSet, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons,
+  Vcl.Mask, Vcl.DBCtrls,
+  System.UITypes;
+
+type
+  TFrmCadCategoria = class(TForm)
+    PnlContainer: TPanel;
+    PnlTop: TPanel;
+    PnlBottom: TPanel;
+    lblCod: TLabel;
+    edtCodigo: TEdit;
+    Label1: TLabel;
+    edtNome: TDBEdit;
+    pnlGravar: TPanel;
+    pnlExcluir: TPanel;
+    pnlCancelar: TPanel;
+    pnlSair: TPanel;
+    QryCategoria: TpFIBDataSet;
+    DtsCategoria: TDataSource;
+    QryCategoriaCOD_FORMULA: TFIBIntegerField;
+    QryCategoriaNOME_FORMULA: TFIBStringField;
+    QryCategoriaDTUPDATE_FORMULA: TFIBDateTimeField;
+    procedure pnlSairClick(Sender: TObject);
+    procedure pnlGravarMouseEnter(Sender: TObject);
+    procedure pnlGravarMouseLeave(Sender: TObject);
+    procedure edtCodigoEnter(Sender: TObject);
+    procedure edtCodigoExit(Sender: TObject);
+    procedure edtCodigoKeyPress(Sender: TObject; var Key: Char);
+    procedure pnlGravarClick(Sender: TObject);
+    procedure FormKeyPress(Sender: TObject; var Key: Char);
+    procedure pnlExcluirClick(Sender: TObject);
+    procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+    procedure FormShow(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    FCodigo : integer;
+    function GetCodigo: Integer;
+    procedure SetCodigo(const Value: Integer);
+  public
+    class function New : TFrmCadCategoria;
+    procedure Find;
+    property Codigo: Integer read GetCodigo write SetCodigo;
+  end;
+
+
+implementation
+
+{$R *.dfm}
+
+uses Unt_DM, pFIBDatabase, Unit_Funcoes;
+
+{ TFrmCadCategoria }
+
+procedure TFrmCadCategoria.edtCodigoEnter(Sender: TObject);
+begin
+  KeyPreview := False;
+end;
+
+procedure TFrmCadCategoria.edtCodigoExit(Sender: TObject);
+begin
+    KeyPreview := True;
+end;
+
+procedure TFrmCadCategoria.edtCodigoKeyPress(Sender: TObject; var Key: Char);
+begin
+  if(Key = #13)  then
+  begin
+     Key := #0;
+     FCodigo := StrToIntDef(edtCodigo.Text,0);
+
+     if (FCodigo = 0) then begin
+       edtCodigo.Text := 'Automático';
+       edtCodigo.Modified := False;
+       if (QryCategoria.State <> DsInsert) then Find
+       else edtNome.SetFocus;
+     end else if(edtCodigo.Modified) then begin
+        edtCodigo.Modified := False;
+        Find;
+     end else edtNome.SetFocus;
+  end;
+end;
+
+procedure TFrmCadCategoria.Find;
+begin
+   QryCategoria.Close;
+   QryCategoria.ParamByName('COD').AsInteger := FCodigo;
+   QryCategoria.Open;
+
+   if QryCategoria.IsEmpty then
+   begin
+     PnlTop.Caption := 'Inserindo Categoria';
+     QryCategoria.Insert;
+   end
+   else
+   begin
+     PnlTop.Caption := 'Alterando Categoria '+ FCodigo.ToString;
+     QryCategoria.Edit;
+     edtCodigo.Text := FCodigo.ToString;
+   end;
+
+  if (FCodigo = 0) then EdtCodigo.SetFocus
+  else EdtNome.SetFocus;
+end;
+
+procedure TFrmCadCategoria.FormCloseQuery(Sender: TObject;
+  var CanClose: Boolean);
+begin
+  if QryCategoria.Modified then CanClose := (Application.MessageBox(Pchar('Deseja Realmente Sair?'), Pchar('Confirmação'), MB_ICONWARNING + MB_YesNo + MB_DEFBUTTON2) = IDYES);
+  if not CanClose then EdtNome.SetFocus;
+end;
+
+procedure TFrmCadCategoria.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F5 then
+  begin  // Verifica se a tecla pressionada é a tecla F5
+    Key := 0;
+    pnlAtualizar.OnClick(Sender);
+  end
+  else if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
+
+procedure TFrmCadCategoria.FormKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (Key = #13) then begin
+    Key := #0;
+    Perform(WM_NextDlgCtl, 0, 0);
+  end;
+end;
+
+procedure TFrmCadCategoria.FormShow(Sender: TObject);
+begin
+Find;
+end;
+
+function TFrmCadCategoria.GetCodigo: Integer;
+begin
+    Result := FCodigo;
+end;
+
+class function TFrmCadCategoria.New: TFrmCadCategoria;
+begin
+    result := TFrmCadCategoria.Create(nil);
+end;
+
+procedure TFrmCadCategoria.pnlSairClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TFrmCadCategoria.SetCodigo(const Value: Integer);
+begin
+     if (Value < 0) then raise Exception.Create('Não é Permitido Valores Negativos!');
+     FCodigo := Value;
+end;
+
+procedure TFrmCadCategoria.pnlExcluirClick(Sender: TObject);
+var
+  _Transaction : TpFIBTransaction;
+begin
+  _Transaction := DM.GetNewTransaction;
+  try
+    QryCategoria.UpdateTransaction := _Transaction;
+    try
+      QryCategoria.UpdateTransaction.StartTransaction;
+      QryCategoria.Delete;
+      QryCategoria.UpdateTransaction.Commit;
+      except
+      on E:Exception  do begin
+      if QryCategoria.UpdateTransaction.InTransaction then QryCategoria.UpdateTransaction.Rollback;
+      ShowMessage('Ocorreu um erro ao excluir a categoria!' + #13 +'Erro: '+e.Message);
+      end;
+      end
+    finally
+     FreeAndNil(_Transaction);
+    end;
+  end;
+
+procedure TFrmCadCategoria.pnlGravarClick(Sender: TObject);
+var
+   _Transaction: TpFIBTransaction;
+begin
+   _Transaction := DM.GetNewTransaction;
+   try
+      QryCategoria.UpdateTransaction := _Transaction;
+     try
+      QryCategoria.UpdateTransaction.StartTransaction;
+      if (QryCategoria.State = dsInsert) then
+      begin
+        if (edtCodigo.Text = 'Automático')  then
+        begin
+        QryCategoriaCOD_FORMULa.AsInteger := GetNexId('Formulas','cod_formula','',dm.QryGen);
+        end else
+        QryCategoriaCOD_FORMULA.AsInteger := StrToInt(edtCodigo.Text);
+      end;
+     QryCategoria.Post;
+     QryCategoria.UpdateTransaction.Commit;
+     edtCodigo.Text := '';
+     FCodigo := 0;
+     Find;
+      except
+      on E:Exception do begin
+        if QryCategoria.UpdateTransaction.InTransaction then QryCategoria.UpdateTransaction.Rollback;
+        ShowMessage('Ocorreu um Erro ao Gravar a Categoria!' + #13 + 'Erro: ' + E.Message);
+      end;
+    end
+    finally
+    FreeAndNil(_Transaction);
+  end;
+end;
+
+procedure TFrmCadCategoria.pnlGravarMouseEnter(Sender: TObject);
+begin
+   SetBackgruondBotoes(TPanel(Sender), clHighlight);
+end;
+
+procedure TFrmCadCategoria.pnlGravarMouseLeave(Sender: TObject);
+begin
+    SetBackgruondBotoes(TPanel(Sender), clSilver);
+end;
+
+end.

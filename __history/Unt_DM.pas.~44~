@@ -1,0 +1,100 @@
+unit Unt_DM;
+
+interface
+
+uses
+  System.SysUtils, System.Classes, FIBDatabase, pFIBDatabase, FIBQuery, IniFiles,
+  pFIBQuery;
+
+type
+  TDM = class(TDataModule)
+    DB: TpFIBDatabase;
+    TransRead: TpFIBTransaction;
+    QryGen: TpFIBQuery;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    class function New: TDM;
+
+    procedure ConectarDB;
+    function GetNewTransaction: TpFIBTransaction;
+  end;
+
+var
+  DM: TDM;
+
+implementation
+
+uses
+  Vcl.Dialogs;
+
+{%CLASSGROUP 'Vcl.Controls.TControl'}
+
+{$R *.dfm}
+
+{ TDM }
+
+procedure TDM.ConectarDB;
+ var
+  IniFile: TIniFile;
+  CaminhoDB, Servidor, Porta: string;
+begin
+  IniFile:= TIniFile.Create('config.ini');
+  try
+    CaminhoDB := IniFile.ReadString('Conexao','DataBase',CaminhoDB);
+    Servidor := IniFile.ReadString('Conexao', 'Servidor','');
+    Porta := IniFile.ReadString('Conexao','Porta','');
+    try
+       DB.UseLoginPrompt := False;
+       DB.DBParams.Clear;
+      with DB.ConnectParams do begin
+         UserName := 'sups';
+         Password := 'maps3880';
+         RoleName := EmptyStr;
+         CharSet := 'WIN1252';
+
+    end;
+
+    DB.DBName := CaminhoDB;
+    DB.Open;
+    if DB.Connected then TransRead.StartTransaction;
+  except
+    on E:Exception do begin
+      raise Exception.Create('Ocorreu um Erro ao Conectar no DB!' + #13 + 'Erro: ' + E.Message);
+    end;
+  end;
+  finally
+    IniFile.Free;
+  end;
+end;
+
+function TDM.GetNewTransaction: TpFIBTransaction;
+begin
+  try
+    Result := TpFIBTransaction.Create(nil);
+    Result.DefaultDatabase := DB;
+    Result.TRParams.Clear;
+    Result.TRParams.Add('write');
+    Result.TRParams.Add('nowait');
+    Result.TRParams.Add('rec_version');
+    Result.TRParams.Add('read_committed');
+  except
+    on E:Exception do begin
+      raise Exception.Create('Ocorreu um Erro ao Instanciar uma Transação!' + #13 + 'Erro: ' + E.Message);
+    end;
+  end;
+end;
+
+class function TDM.New: TDM;
+begin
+  try
+    Result := TDM.Create(nil);
+  except
+    on E:Exception do begin
+      raise Exception.Create('Ocorreu um Erro ao Instanciar o DM!' + #13 + 'Erro: ' + E.Message);
+    end;
+  end;
+end;
+
+end.

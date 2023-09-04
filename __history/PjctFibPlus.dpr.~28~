@@ -1,0 +1,26 @@
+program PjctFibPlus;
+
+uses
+  Vcl.Forms,
+  Unt_FrmPrincipal in 'Unt_FrmPrincipal.pas' {FrmPrincipal},
+  Unt_DM in 'Unt_DM.pas' {DM: TDataModule},
+  Unt_FrmCadGrupo in 'Unt_FrmCadGrupo.pas' {FrmCadGrupo},
+  Unt_FrmCadCategoria in 'Unt_FrmCadCategoria.pas' {FrmCadCategoria},
+  Unit_Funcoes in 'Unit_Funcoes.pas',
+  Unt_FrmCadSubGrupo in 'Unt_FrmCadSubGrupo.pas' {frmCadSubGrupo},
+  Unt_FrmRelGrupo in 'Unt_FrmRelGrupo.pas' {FrmRelGrupos},
+  Unt_FrmRelVendas in 'Unt_FrmRelVendas.pas' {FrmRelVendas},
+  Unt_Frame_Top in 'Unt_Frame_Top.pas' {FrameEdtPadrao: TFrame},
+  Unt_FrmRelCategoria in 'Unt_FrmRelCategoria.pas' {FrmRelCategoria},
+  Unt_Frame_Bottom in 'Unt_Frame_Bottom.pas' {FrameBtnPadrao: TFrame},
+  Unt_Frm_Pesquisa in 'Unt_Frm_Pesquisa.pas' {FrmPesquisa};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  ReportMemoryLeaksOnShutdown := True;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFrmPrincipal, FrmPrincipal);
+  Application.Run;
+end.

@@ -1,0 +1,328 @@
+object frmCadSubGrupo: TfrmCadSubGrupo
+  Left = 0
+  Top = 0
+  BorderStyle = bsDialog
+  Caption = 'Cadastro SubGrupo'
+  ClientHeight = 265
+  ClientWidth = 458
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Position = poScreenCenter
+  OnClose = FormClose
+  OnCreate = FormCreate
+  OnShow = FormShow
+  PixelsPerInch = 96
+  TextHeight = 13
+  object pnlContainer: TPanel
+    Left = 0
+    Top = 0
+    Width = 458
+    Height = 265
+    Align = alClient
+    BevelOuter = bvNone
+    Color = clWhite
+    ParentBackground = False
+    TabOrder = 0
+    object lblCod: TLabel
+      Left = 32
+      Top = 68
+      Width = 37
+      Height = 13
+      Caption = 'C'#243'digo:'
+    end
+    object Label1: TLabel
+      Left = 38
+      Top = 104
+      Width = 31
+      Height = 13
+      Caption = 'Nome:'
+    end
+    object Label2: TLabel
+      Left = 38
+      Top = 139
+      Width = 33
+      Height = 13
+      Caption = 'Grupo:'
+    end
+    object pnlBottom: TPanel
+      Left = 0
+      Top = 212
+      Width = 458
+      Height = 53
+      Align = alBottom
+      BevelOuter = bvNone
+      Color = clAppWorkSpace
+      ParentBackground = False
+      TabOrder = 0
+      object pnlGravar: TPanel
+        Left = 2
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Gravar <Ins>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 0
+        OnClick = pnlGravarClick
+        OnMouseEnter = pnlCancelarMouseEnter
+        OnMouseLeave = pnlCancelarMouseLeave
+      end
+      object pnlExcluir: TPanel
+        Left = 116
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Excluir <Del>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 1
+        OnMouseEnter = pnlCancelarMouseEnter
+        OnMouseLeave = pnlCancelarMouseLeave
+      end
+      object pnlCancelar: TPanel
+        Left = 230
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Cancelar <Esc>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 2
+        OnMouseEnter = pnlCancelarMouseEnter
+        OnMouseLeave = pnlCancelarMouseLeave
+      end
+      object pnlSair: TPanel
+        Left = 344
+        Top = 7
+        Width = 112
+        Height = 40
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Caption = 'Sair <Esc>'
+        Color = clSilver
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -13
+        Font.Name = 'Tahoma'
+        Font.Style = [fsBold]
+        ParentBackground = False
+        ParentFont = False
+        TabOrder = 3
+        OnClick = pnlSairClick
+        OnMouseEnter = pnlCancelarMouseEnter
+        OnMouseLeave = pnlCancelarMouseLeave
+      end
+    end
+    object pnlTop: TPanel
+      Left = 0
+      Top = 0
+      Width = 458
+      Height = 41
+      Align = alTop
+      BevelOuter = bvNone
+      Caption = 'Cadastro de SubGrupo'
+      Color = clAppWorkSpace
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWhite
+      Font.Height = -15
+      Font.Name = 'Tahoma'
+      Font.Style = [fsBold]
+      ParentBackground = False
+      ParentFont = False
+      TabOrder = 1
+    end
+    object edtCodigo: TEdit
+      Left = 75
+      Top = 65
+      Width = 78
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 2
+      OnEnter = edtCodigoEnter
+      OnExit = edtCodigoExit
+      OnKeyPress = edtCodigoKeyPress
+    end
+    object edtNome: TDBEdit
+      Left = 75
+      Top = 101
+      Width = 214
+      Height = 21
+      DataField = 'NOME_SUBCLASSE'
+      DataSource = DtsSubGrupo
+      TabOrder = 3
+    end
+    object DBLookupComboBox1: TDBLookupComboBox
+      Left = 75
+      Top = 137
+      Width = 134
+      Height = 21
+      DataField = 'CODCLASSE_SUBCLASSE'
+      DataSource = DtsSubGrupo
+      KeyField = 'COD_CLASSE'
+      ListField = 'NOME_CLASSE'
+      ListSource = DtsGrupo
+      TabOrder = 4
+    end
+  end
+  object QrySubgrupo: TpFIBDataSet
+    UpdateSQL.Strings = (
+      'UPDATE SUBCLASSE'
+      'SET '
+      '    CODCLASSE_SUBCLASSE = :CODCLASSE_SUBCLASSE,'
+      '    NOME_SUBCLASSE = :NOME_SUBCLASSE,'
+      '    DTUPDATE_SUBCLASSE = :DTUPDATE_SUBCLASSE,'
+      '    IDSITE_SUBCLASSE = :IDSITE_SUBCLASSE'
+      'WHERE'
+      '    COD_SUBCLASSE = :OLD_COD_SUBCLASSE'
+      '    ')
+    DeleteSQL.Strings = (
+      'DELETE FROM'
+      '    SUBCLASSE'
+      'WHERE'
+      '        COD_SUBCLASSE = :OLD_COD_SUBCLASSE'
+      '    ')
+    InsertSQL.Strings = (
+      'INSERT INTO SUBCLASSE('
+      '    COD_SUBCLASSE,'
+      '    CODCLASSE_SUBCLASSE,'
+      '    NOME_SUBCLASSE,'
+      '    DTUPDATE_SUBCLASSE,'
+      '    IDSITE_SUBCLASSE'
+      ')'
+      'VALUES('
+      '    :COD_SUBCLASSE,'
+      '    :CODCLASSE_SUBCLASSE,'
+      '    :NOME_SUBCLASSE,'
+      '    :DTUPDATE_SUBCLASSE,'
+      '    :IDSITE_SUBCLASSE'
+      ')')
+    RefreshSQL.Strings = (
+      'SELECT'
+      '    SUB.COD_SUBCLASSE,'
+      '    SUB.CODCLASSE_SUBCLASSE,'
+      '    SUB.NOME_SUBCLASSE,'
+      '    SUB.DTUPDATE_SUBCLASSE,'
+      '    SUB.IDSITE_SUBCLASSE'
+      'FROM'
+      '    SUBCLASSE SUB'
+      ''
+      ' WHERE '
+      '        SUB.COD_SUBCLASSE = :OLD_COD_SUBCLASSE'
+      '    ')
+    SelectSQL.Strings = (
+      'SELECT * from SubClasse'
+      'where (cod_subclasse = :COD)')
+    Transaction = DM.TransRead
+    Database = DM.DB
+    SQL.Strings = (
+      'SELECT * from SubClasse'
+      'where (cod_subclasse = :COD)')
+    DefaultFormats.DisplayFormatTime = 'HH:MM'
+    Left = 344
+    Top = 8
+    object QrySubgrupoCOD_SUBCLASSE: TFIBIntegerField
+      FieldName = 'COD_SUBCLASSE'
+    end
+    object QrySubgrupoCODCLASSE_SUBCLASSE: TFIBIntegerField
+      FieldName = 'CODCLASSE_SUBCLASSE'
+    end
+    object QrySubgrupoNOME_SUBCLASSE: TFIBStringField
+      FieldName = 'NOME_SUBCLASSE'
+      Size = 30
+      EmptyStrToNull = True
+    end
+    object QrySubgrupoDTUPDATE_SUBCLASSE: TFIBDateTimeField
+      FieldName = 'DTUPDATE_SUBCLASSE'
+      DisplayFormat = 'dd/mm/yyyy HH:mm'
+    end
+    object QrySubgrupoIDSITE_SUBCLASSE: TFIBStringField
+      FieldName = 'IDSITE_SUBCLASSE'
+      EmptyStrToNull = True
+    end
+  end
+  object DtsSubGrupo: TDataSource
+    DataSet = QrySubgrupo
+    Left = 400
+    Top = 8
+  end
+  object QryGrupo: TpFIBDataSet
+    SelectSQL.Strings = (
+      'SELECT'
+      '    COD_CLASSE,'
+      '    NOME_CLASSE,'
+      '    DESCRICAO_CLASSE,'
+      '    DTUPDATE_CLASSE,'
+      '    IDSITE_CLASSE'
+      'FROM'
+      '    CLASSES ')
+    Transaction = DM.TransRead
+    Database = DM.DB
+    SQL.Strings = (
+      'SELECT'
+      '    COD_CLASSE,'
+      '    NOME_CLASSE,'
+      '    DESCRICAO_CLASSE,'
+      '    DTUPDATE_CLASSE,'
+      '    IDSITE_CLASSE'
+      'FROM'
+      '    CLASSES ')
+    DefaultFormats.DisplayFormatTime = 'HH:MM'
+    Left = 336
+    Top = 80
+    object QryGrupoCOD_CLASSE: TFIBIntegerField
+      FieldName = 'COD_CLASSE'
+    end
+    object QryGrupoNOME_CLASSE: TFIBStringField
+      FieldName = 'NOME_CLASSE'
+      Size = 60
+      EmptyStrToNull = True
+    end
+    object QryGrupoDESCRICAO_CLASSE: TFIBStringField
+      FieldName = 'DESCRICAO_CLASSE'
+      Size = 60
+      EmptyStrToNull = True
+    end
+    object QryGrupoDTUPDATE_CLASSE: TFIBDateTimeField
+      FieldName = 'DTUPDATE_CLASSE'
+      DisplayFormat = 'dd/mm/yyyy HH:mm'
+    end
+    object QryGrupoIDSITE_CLASSE: TFIBStringField
+      FieldName = 'IDSITE_CLASSE'
+      EmptyStrToNull = True
+    end
+  end
+  object DtsGrupo: TDataSource
+    DataSet = QryGrupo
+    Left = 400
+    Top = 80
+  end
+end

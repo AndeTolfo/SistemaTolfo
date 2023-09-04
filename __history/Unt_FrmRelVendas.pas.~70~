@@ -1,0 +1,338 @@
+unit Unt_FrmRelVendas;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ComCtrls, DateUtils,
+  Unt_Frame_Bottom, Data.DB, FIBDataSet, pFIBDataSet, Vcl.Grids, Vcl.DBGrids,
+  Vcl.Buttons, Vcl.Menus;
+
+type
+  TFrmRelVendas = class(TForm)
+    PnlContainer: TPanel;
+    pnlBottom: TPanel;
+    pnlTop: TPanel;
+    dtIni: TDateTimePicker;
+    DtFim: TDateTimePicker;
+    Label1: TLabel;
+    Label2: TLabel;
+    FrameBtnPadrao1: TFrameBtnPadrao;
+    dblistagem: TDBGrid;
+    QryRelVendas: TpFIBDataSet;
+    DtsRelVendas: TDataSource;
+    QryRelVendasCOD_VENDA: TFIBIntegerField;
+    QryRelVendasDATA_VENDA: TFIBDateField;
+    QryRelVendasCODVENDEDOR_VENDA: TFIBSmallIntField;
+    QryRelVendasCODCLIENTE_VENDA: TFIBIntegerField;
+    QryRelVendasVLCOMISSAO_VENDA: TFIBFloatField;
+    QryRelVendasCODFPG_VENDA: TFIBSmallIntField;
+    QryRelVendasOBS_VENDA: TFIBStringField;
+    QryRelVendasCODCONTA_VENDA: TFIBIntegerField;
+    QryRelVendasNOTAIMPRESSA_VENDA: TFIBSmallIntField;
+    QryRelVendasSTATUS_VENDA: TFIBSmallIntField;
+    QryRelVendasCODCONTACOMISSAO_VENDA: TFIBIntegerField;
+    QryRelVendasTOTAL_VENDA: TFIBFloatField;
+    QryRelVendasHORA_VENDA: TFIBTimeField;
+    QryRelVendasCODCONVENIO_VENDA: TFIBSmallIntField;
+    QryRelVendasTIPOOPERACAO: TFIBSmallIntField;
+    QryRelVendasCODCUPOM_VENDA: TFIBIntegerField;
+    QryRelVendasDESCFPGTO_VENDA: TFIBFloatField;
+    QryRelVendasDESCCLIENTE_VENDA: TFIBFloatField;
+    QryRelVendasCODSERVICO_VENDA: TFIBIntegerField;
+    QryRelVendasIDENTIFICACAO_VENDA: TFIBStringField;
+    QryRelVendasCODAUTORIZACAO_VENDA: TFIBSmallIntField;
+    QryRelVendasTOTALDEVOLVIDO_VENDA: TFIBFloatField;
+    QryRelVendasCOMPRADOR_VENDA: TFIBStringField;
+    QryRelVendasVLCOMISDEV_VENDA: TFIBFloatField;
+    QryRelVendasCODNOTAF_VENDA: TFIBIntegerField;
+    QryRelVendasKM_VENDA: TFIBStringField;
+    QryRelVendasFROTA_VENDA: TFIBStringField;
+    QryRelVendasIDECF_VENDA: TFIBSmallIntField;
+    QryRelVendasCODREFVENDA_VENDA: TFIBStringField;
+    QryRelVendasSITUACAOPED_VENDA: TFIBSmallIntField;
+    QryRelVendasDTENTREGA_VENDA: TFIBDateTimeField;
+    QryRelVendasCODINDICACAO_VENDA: TFIBSmallIntField;
+    QryRelVendasCODTERMINAL_VENDA: TFIBSmallIntField;
+    QryRelVendasCODOPERADOR_VENDA: TFIBSmallIntField;
+    QryRelVendasCODOPERCONFERIU_VENDA: TFIBIntegerField;
+    QryRelVendasCCFCUPOM_VENDA: TFIBIntegerField;
+    QryRelVendasDATACUPOM_VENDA: TFIBDateTimeField;
+    QryRelVendasCPFCNPJ_VENDA: TFIBStringField;
+    QryRelVendasHEVENDANORMAL_VENDA: TFIBIntegerField;
+    QryRelVendasENQUADRAMENTOSERVICO_VENDA: TFIBStringField;
+    QryRelVendasCODNFSE_VENDA: TFIBIntegerField;
+    QryRelVendasTIPOBENEF_VENDA: TFIBSmallIntField;
+    QryRelVendasOBS2_VENDA: TFIBMemoField;
+    QryRelVendasCODNFCE_VENDA: TFIBIntegerField;
+    QryRelVendasCODCARGA_VENDA: TFIBStringField;
+    QryRelVendasCODAUXNFE_VENDA: TFIBIntegerField;
+    QryRelVendasORIGEM_VENDA: TFIBSmallIntField;
+    QryRelVendasTROCO_VENDA: TFIBFloatField;
+    QryRelVendasCODPEDPALM_VENDA: TFIBStringField;
+    QryRelVendasCODPEDCLI_VENDA: TFIBStringField;
+    QryRelVendasAJUSTOU_ESTOQUE: TFIBStringField;
+    QryRelVendasINDPRES_VENDA: TFIBSmallIntField;
+    QryRelVendasCODENTREGA_VENDA: TFIBIntegerField;
+    QryRelVendasHEVENDAPDV_VENDA: TFIBStringField;
+    QryRelVendasCALCPARTICMSPORDENTRO_VENDA: TFIBStringField;
+    QryRelVendasCODMOTIVOSNGPC_VENDA: TFIBSmallIntField;
+    QryRelVendasCODPREVENDAS_VENDA: TFIBStringField;
+    lblCod: TLabel;
+    edtCodVenda: TEdit;
+    Label3: TLabel;
+    edtCodCliente: TEdit;
+    edtCodCond: TEdit;
+    edtCodCidade: TEdit;
+    Label5: TLabel;
+    Label4: TLabel;
+    btnCondi: TSpeedButton;
+    btnCidade: TSpeedButton;
+    btnCliente: TSpeedButton;
+    PopupMenu1: TPopupMenu;
+    Listagem1: TMenuItem;
+    RelListagem: TMenuItem;
+    procedure pnlAtualizarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FrameBtnPadrao1pnlSairClick(Sender: TObject);
+    procedure FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+    procedure btnClienteClick(Sender: TObject);
+    procedure btnCondiClick(Sender: TObject);
+    procedure btnCidadeClick(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+  private
+    { Private declarations }
+  public
+    class function New : TFrmRelVendas;
+  end;
+
+
+implementation
+
+{$R *.dfm}
+
+uses Unit_Funcoes, Unt_DM, Unt_Frm_Pesquisa;
+
+procedure TFrmRelVendas.btnCondiClick(Sender: TObject);
+var
+_Pesquisa : TFrmPesquisa;
+begin
+  _Pesquisa := TFrmPesquisa.New;
+  try
+     _Pesquisa.Tabela := 'CondicaoPagamento';
+     _Pesquisa.Caption := 'Pesquisa por Condições de Pagamento';
+      if (_Pesquisa.ShowModal = mrOk) then
+      begin
+       if _Pesquisa.Cod_Selected <> 0 then
+       begin
+         if edtCodCond.Text = '' then
+         begin
+           edtCodCond.Text := _Pesquisa.Cod_Selected.ToString;
+         end
+         else
+         begin
+           edtCodCond.Text := edtCodCond.Text + ',' + _Pesquisa.Cod_Selected.ToString;
+         end;
+       end;
+      end;
+  finally
+    FreeAndNil(_Pesquisa);
+  end;
+end;
+
+procedure TFrmRelVendas.FormCreate(Sender: TObject);
+begin
+    dtIni.Date := StartOfTheMonth(Date);
+    DtFim.Date := EndOfTheMonth(Date);
+end;
+
+procedure TFrmRelVendas.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F5 then begin  // Verifica se a tecla pressionada é a tecla F5
+    Key := 0;
+    FrameBtnPadrao1pnlAtualizarClick(sender)
+  end
+  else if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
+procedure TFrmRelVendas.FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
+var SqlWhere : String;
+begin
+    SqlWhere := '';
+  // verificar valores variáveis
+  if (dtIni.Date <= DtFim.Date) and (DtFim.Date >= dtIni.Date) then
+  begin
+     if (SqlWhere <> '') then
+     begin
+       SqlWhere := SqlWhere + ' AND ';
+       SqlWhere := SqlWhere + 'V.Data_Venda >= ' + QuotedStr(FormatDateTime('yyyy-mm-dd', dtIni.Date))+
+       ' AND V.DATA_VENDA <= ' + QuotedStr(FormatDateTime('yyyy-mm-dd', DtFim.Date));
+     end
+     else
+     begin
+     SqlWhere := SqlWhere + 'V.Data_Venda >= ' + QuotedStr(FormatDateTime('yyyy-mm-dd', dtIni.Date))+
+       ' AND V.DATA_VENDA <= ' + QuotedStr(FormatDateTime('yyyy-mm-dd', DtFim.Date));
+     end;
+  end else
+  begin
+  ShowMessage('Verique o Intervalo das Datas');
+  exit
+  end;
+
+  if (edtCodVenda.Text <> '') then
+  begin
+      if (SqlWhere <> '') then
+      begin
+        SqlWhere := SqlWhere + ' AND ';
+        SqlWhere := SqlWhere + 'V.Cod_venda in (' + edtCodVenda.Text + ')';
+      end
+      else
+      begin
+        SqlWhere := SqlWhere + 'V.Cod_venda in (' + edtCodVenda.Text + ')';
+      end;
+  end;
+
+  if (edtCodCliente.Text <> '') then
+  begin
+      if (SqlWhere <> '') then
+      begin
+        SqlWhere := SqlWhere + ' AND ';
+        SqlWhere := SqlWhere + 'v.codcliente_venda in (' + edtCodCliente.Text + ')';
+      end
+      else
+      begin
+        SqlWhere := SqlWhere + 'v.codcliente_venda in (' + edtCodCliente.Text + ')';
+      end;
+  end;
+
+  if (edtCodCond.Text <> '') then
+  begin
+      if (SqlWhere <> '') then
+      begin
+        SqlWhere := SqlWhere + ' AND ';
+        SqlWhere := SqlWhere + 'V.CODFPG_VENDA in (' + edtCodCond.Text + ')';
+      end
+      else
+      begin
+        SqlWhere := SqlWhere + 'V.CODFPG_VENDA in (' + edtCodCond.Text + ')';
+      end;
+  end;
+
+//  if (edtCodCidade.Text <> '') then
+//  begin
+//      if (SqlWhere <> '') then
+//      begin
+//        SqlWhere := SqlWhere + ' AND ';
+//        SqlWhere := SqlWhere + 'V.COD_CIDADE
+//      end;
+//
+//  end;
+    QryRelVendas.Close;
+    QryRelVendas.SQL.Clear;
+    QryRelVendas.SQL.Add('Select * from Vendas v');
+
+    if (SqlWhere <> '')  then
+    begin
+      QryRelVendas.Sql.Add('Where ' + SqlWhere);
+    end;
+
+    QryRelVendas.Open;
+
+end;
+
+procedure TFrmRelVendas.FrameBtnPadrao1pnlSairClick(Sender: TObject);
+begin
+  close;
+end;
+
+class function TFrmRelVendas.New: TFrmRelVendas;
+begin
+  result := TFrmRelVendas.Create(nil);
+end;
+
+procedure TFrmRelVendas.pnlAtualizarClick(Sender: TObject);
+var
+SqlWhere : string;
+DataIni, DataFim : TDate;
+begin
+  //setando where para vazio
+  SqlWhere := '';
+  //verificando intervalo de datas
+  if (dtIni.Date <= dtFim.Date) and (dtFim.Date >= dtIni.Date) then
+  begin
+    DataIni := dtIni.Date;
+    DataFim := dtFim.Date;
+
+    if (SqlWhere = '') then
+    begin
+        SqlWhere := SqlWhere ;
+    end;
+
+  end
+  else
+  begin
+    ShowMessage('Verifique o Intervalo das datas');
+  end;
+end;
+
+
+procedure TFrmRelVendas.btnCidadeClick(Sender: TObject);
+var
+_Pesquisa : TFrmPesquisa;
+begin
+  _Pesquisa := TFrmPesquisa.New;
+  try
+     _Pesquisa.Tabela := 'Cidades';
+     _Pesquisa.Caption := 'Pesquisa por Cidades';
+     if (_Pesquisa.ShowModal = mrOk) then
+     begin
+       if _Pesquisa.Cod_Selected <> 0 then
+       begin
+         if edtCodCidade.Text = '' then
+         begin
+           edtCodCidade.Text := _Pesquisa.Cod_Selected.ToString;
+         end
+         else
+         begin
+           edtCodCidade.Text := edtCodCidade.Text + ',' + _Pesquisa.Cod_Selected.ToString;
+         end;
+       end;
+     end;
+  finally
+    FreeAndNil(_Pesquisa);
+  end;
+end;
+
+procedure TFrmRelVendas.btnClienteClick(Sender: TObject);
+var
+_Pesquisa : TFrmPesquisa;
+begin
+  _Pesquisa := TFrmPesquisa.New;
+  try
+     _Pesquisa.Tabela := 'Clientes';
+     _Pesquisa.Caption := 'Pesquisa por Clientes';
+     if _Pesquisa.ShowModal = mrOk then
+     begin
+       if _Pesquisa.Cod_Selected <> 0 then
+       begin
+         if edtCodCliente.Text = '' then
+         begin
+           edtCodCliente.Text := _Pesquisa.Cod_Selected.ToString;
+         end
+         else
+         begin
+           edtCodCliente.Text := edtCodCliente.Text + ',' + _Pesquisa.Cod_Selected.ToString;
+         end;
+       end;
+     end;
+  finally
+    FreeAndNil(_Pesquisa);
+  end;
+end;
+
+end.

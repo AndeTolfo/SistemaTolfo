@@ -31,8 +31,6 @@ object FrmCadGrupo: TFrmCadGrupo
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 474
-    ExplicitHeight = 201
     object LbCodigo: TLabel
       Left = 29
       Top = 52
@@ -71,7 +69,6 @@ object FrmCadGrupo: TFrmCadGrupo
       ParentBackground = False
       ParentFont = False
       TabOrder = 0
-      ExplicitWidth = 474
     end
     object PnlBottom: TPanel
       Left = 0
@@ -83,8 +80,6 @@ object FrmCadGrupo: TFrmCadGrupo
       Color = clAppWorkSpace
       ParentBackground = False
       TabOrder = 4
-      ExplicitTop = 145
-      ExplicitWidth = 474
       object PnlSalvar: TPanel
         Left = 7
         Top = 7
@@ -246,7 +241,7 @@ object FrmCadGrupo: TFrmCadGrupo
       'SELECT * FROM CLASSES'
       'WHERE (COD_CLASSE = :COD)')
     DefaultFormats.DisplayFormatTime = 'HH:MM'
-    Left = 376
+    Left = 344
     Top = 8
     object QryGrupoCOD_CLASSE: TFIBIntegerField
       FieldName = 'COD_CLASSE'

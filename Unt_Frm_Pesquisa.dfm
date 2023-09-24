@@ -102,8 +102,10 @@ object FrmPesquisa: TFrmPesquisa
         ExplicitTop = -2
         ExplicitHeight = 53
         inherited pnlAtualizar: TPanel
+          Left = 13
           OnClick = FrameBtnPadrao1pnlAtualizarClick
           OnMouseLeave = FrameBtnPadrao1pnlAtualizarMouseLeave
+          ExplicitLeft = 13
         end
         inherited pnlEditar: TPanel
           Caption = 'Relat'#243'rio'

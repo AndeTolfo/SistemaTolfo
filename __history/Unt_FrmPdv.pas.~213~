@@ -54,6 +54,23 @@ type
     CDSProdutosPR_Unit: TFloatField;
     CDSProdutosSubTotal: TFloatField;
     CDSProdutosTotalFinal: TFloatField;
+    pnlCondicoesPag: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Label10: TLabel;
+    edtCodCondicao: TEdit;
+    edtNomeCondicao: TEdit;
+    btnPesquisaCondicao: TSpeedButton;
+    btnEditCondicao: TSpeedButton;
+    pnlExcluirItem: TPanel;
+    pnlCancelarVenda: TPanel;
+    Panel10: TPanel;
+    pnlFinalizar: TPanel;
+    Panel12: TPanel;
+    Panel13: TPanel;
+    Panel8: TPanel;
+    pnlSair: TPanel;
+    Panel14: TPanel;
     procedure FormShow(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure btnClienteClick(Sender: TObject);
@@ -69,6 +86,16 @@ type
     procedure EdtSubTotalKeyPress(Sender: TObject; var Key: Char);
     procedure edtQuantKeyPress(Sender: TObject; var Key: Char);
     procedure EdtPrecoUnitKeyPress(Sender: TObject; var Key: Char);
+    procedure pnlExcluirItemMouseEnter(Sender: TObject);
+    procedure pnlExcluirItemMouseLeave(Sender: TObject);
+    procedure pnlSairClick(Sender: TObject);
+    procedure ClearFields;
+    procedure pnlCancelarVendaClick(Sender: TObject);
+    procedure pnlExcluirItemClick(Sender: TObject);
+    procedure btnPesquisaCondicaoClick(Sender: TObject);
+    procedure edtCodCondicaoKeyPress(Sender: TObject; var Key: Char);
+    procedure edtCodCondicaoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
      var contador : integer;{ Private declarations }
   public
@@ -95,16 +122,8 @@ begin
      begin
        if _Pesquisa.Cod_Selected <> 0 then
        begin
-         if edtCodClient.Text = '' then
-         begin
            edtCodClient.Text := _Pesquisa.Cod_Selected.ToString;
-           edtNomeCliente.Text := _Pesquisa.Nome_Cliente;
-         end
-         else
-         begin
-           edtCodClient.Text := _Pesquisa.Cod_Selected.ToString;
-           edtNomeCliente.Text := _Pesquisa.Nome_Cliente;
-         end;
+           edtNomeCliente.Text := _Pesquisa.Nome;
        end;
      end;
   finally
@@ -114,20 +133,24 @@ end;
 
 procedure TFrmTelaPdv.edtCodClientKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+  var _PesquisaCliente : TFrmPesquisa;
 begin
-  if Key = 13 then
+  if Key = VK_F3 then
   begin
-    if edtCodClient.Text = '' then
-    begin
-      ShowMessage('Código Inválido');
-    end
-    else
-    begin
-      Find('Clientes','COD');
-      if edtNomeCliente.Text <> '' then
+    try
+    _PesquisaCliente := TFrmPesquisa.New;
+    _PesquisaCliente.Tabela := 'Clientes';
+    _PesquisaCliente.Caption := 'Pesquisa por Clientes';
+     if _PesquisaCliente.ShowModal = mrOk then
+     begin
+       if _PesquisaCliente.Cod_Selected <> 0 then
        begin
-       edtCodProduto.SetFocus;
-      end;
+           edtCodClient.Text := _PesquisaCliente.Cod_Selected.ToString;
+           edtNomeCliente.Text := _PesquisaCliente.Nome;
+       end;
+     end;
+    finally
+     FreeAndNil(_PesquisaCliente);
     end;
   end;
 end;
@@ -148,6 +171,46 @@ begin
       begin
       edtCodProduto.SetFocus;
       end;
+    end;
+  end;
+end;
+
+procedure TFrmTelaPdv.edtCodCondicaoKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+  var _PesquisaCond : TFrmPesquisa;
+begin
+  if Key = VK_F3 then
+  begin
+    try
+    _PesquisaCond := TFrmPesquisa.New;
+    _PesquisaCond.Tabela := 'CondicaoPagamento';
+    _PesquisaCond.Caption := 'Pesquisa por Condições de Pagamento';
+     if _PesquisaCond.ShowModal = mrOk then
+     begin
+       if _PesquisaCond.Cod_Selected <> 0 then
+       begin
+           edtCodCondicao.Text := _PesquisaCond.Cod_Selected.ToString;
+           edtNomeCondicao.Text := _PesquisaCond.Nome;
+       end;
+     end;
+    finally
+     FreeAndNil(_PesquisaCond);
+    end;
+  end;
+end;
+
+procedure TFrmTelaPdv.edtCodCondicaoKeyPress(Sender: TObject; var Key: Char);
+ begin
+  if Key = #13 then
+  begin
+    key := #0;
+    if edtCodCondicao.Text = '' then
+    begin
+      ShowMessage('Código em branco');
+    end
+    else
+    begin
+      Find('CondicaoPagamento','COD');
     end;
   end;
 end;
@@ -312,6 +375,26 @@ begin
          exit
        end;
        end;
+    end
+    else if (Tabela = 'CondicaoPagamento') then
+    begin
+    _QryPesquisa.SQL.Add('select c.cod_formaspg, c.descricao_formaspg from formaspg c');
+      if (TipoPesquisa = 'COD') then
+      begin
+        _QryPesquisa.Sql.Add('Where c.cod_formaspg = :pCod');
+        _QryPesquisa.ParamByName('pCod').AsInteger := StrToInt(edtCodCondicao.Text);
+        _QryPesquisa.Open;
+        if not _QryPesquisa.IsEmpty then
+        begin
+          edtCodCondicao.Text := _QryPesquisa.FieldByName('cod_formaspg').AsString;
+          edtNomeCondicao.Text := _QryPesquisa.FieldByName('descricao_formaspg').AsString;
+        end
+        else
+        begin
+          ShowMessage('Condição Não Encontrada');
+          exit
+        end;
+      end;
     end;
   finally
    FreeAndNil(_QryPesquisa);
@@ -328,11 +411,104 @@ end;
 procedure TFrmTelaPdv.FormShow(Sender: TObject);
 begin
    DtHora.Caption := FormatDateTime('hh:mm:ss', Now);
+    edtCodClient.SetFocus;
 end;
 
 class function TFrmTelaPdv.New: TFrmTelaPdv;
 begin
     result := TFrmTelaPdv.Create(nil);
+end;
+
+procedure TFrmTelaPdv.btnPesquisaCondicaoClick(Sender: TObject);
+var _Pesquisa : TFrmPesquisa;
+begin
+  _Pesquisa := TFrmPesquisa.New;
+  try
+     _Pesquisa.Tabela := 'CondicaoPagamento';
+     _Pesquisa.Caption := 'Pesquisa por Condições';
+     if _Pesquisa.ShowModal = mrOk then
+     begin
+       if _Pesquisa.Cod_Selected <> 0 then
+       begin
+           edtCodCondicao.Text := _Pesquisa.Cod_Selected.ToString;
+           edtNomeCondicao.Text := _Pesquisa.Nome;
+       end;
+     end;
+  finally
+    FreeAndNil(_Pesquisa);
+  end;
+end;
+
+procedure TFrmTelaPdv.ClearFields;
+begin
+  edtCodClient.Text := '';
+  edtNomeCliente.Text := '';
+  edtCodProduto.Text := '';
+  edtNomeProduto.Text := '';
+  edtEstoqueDisp.Text := '';
+  EdtPrecoUnit.Text := '';
+  edtQuant.Text := '';
+  EdtSubTotal.Text := '';
+  CDSProdutos.EmptyDataSet;
+  contador := 1;
+end;
+
+procedure TFrmTelaPdv.pnlCancelarVendaClick(Sender: TObject);
+var
+  Confirm: Integer;
+begin
+  Confirm := MessageDlg('Tem certeza que deseja cancelar a venda?', mtConfirmation, [mbYes, mbNo], 0);
+  if Confirm = mrYes then
+  begin
+    ClearFields;
+    // Outras ações de cancelamento, se necessário
+  end;
+end;
+
+procedure TFrmTelaPdv.pnlExcluirItemClick(Sender: TObject);
+var
+  SelectedRow: Integer;
+  Confirm: Integer;
+begin
+  // Obtenha o índice da linha selecionada na grade
+  SelectedRow := dbListagem.DataSource.DataSet.RecNo;
+
+  // Verifique se uma linha está selecionada
+  if SelectedRow > 0 then
+  begin
+    // Solicite confirmação do usuário
+    Confirm := MessageDlg('Tem certeza que deseja excluir este item?', mtConfirmation, [mbYes, mbNo], 0);
+
+    if Confirm = mrYes then
+    begin
+      // Remova o item da fonte de dados (por exemplo, CDSProdutos)
+      CDSProdutos.Delete;
+      contador := contador -1;
+
+      // Atualize a exibição da grade
+      dbListagem.Refresh;
+    end;
+  end
+  else
+  begin
+    // Se nenhuma linha estiver selecionada, mostre uma mensagem de aviso
+    ShowMessage('Selecione um item para excluir.');
+  end;
+end;
+
+procedure TFrmTelaPdv.pnlExcluirItemMouseEnter(Sender: TObject);
+begin
+  SetBackgruondBotoes(Tpanel(sender),clHighlight);
+end;
+
+procedure TFrmTelaPdv.pnlExcluirItemMouseLeave(Sender: TObject);
+begin
+ SetBackgruondBotoes(TPanel(Sender), clSilver);
+end;
+
+procedure TFrmTelaPdv.pnlSairClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TFrmTelaPdv.TimerTimer(Sender: TObject);

@@ -3,8 +3,8 @@ object FrmCadGrupo: TFrmCadGrupo
   Top = 0
   BorderStyle = bsDialog
   Caption = 'Cadastro de Grupo'
-  ClientHeight = 201
-  ClientWidth = 474
+  ClientHeight = 196
+  ClientWidth = 412
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,6 +16,7 @@ object FrmCadGrupo: TFrmCadGrupo
   Position = poScreenCenter
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
   PixelsPerInch = 96
@@ -23,8 +24,8 @@ object FrmCadGrupo: TFrmCadGrupo
   object PnlContainer: TPanel
     Left = 0
     Top = 0
-    Width = 474
-    Height = 201
+    Width = 412
+    Height = 196
     Align = alClient
     BevelOuter = bvNone
     Color = clWhite
@@ -54,12 +55,12 @@ object FrmCadGrupo: TFrmCadGrupo
     object PnlTop: TPanel
       Left = 0
       Top = 0
-      Width = 474
+      Width = 412
       Height = 41
       Align = alTop
       BevelOuter = bvNone
       Caption = 'Inserindo um Novo Grupo'
-      Color = clHighlight
+      Color = clAppWorkSpace
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -15
@@ -71,23 +72,23 @@ object FrmCadGrupo: TFrmCadGrupo
     end
     object PnlBottom: TPanel
       Left = 0
-      Top = 145
-      Width = 474
+      Top = 140
+      Width = 412
       Height = 56
       Align = alBottom
       BevelOuter = bvNone
-      Color = clHighlight
+      Color = clAppWorkSpace
       ParentBackground = False
       TabOrder = 4
       object PnlSalvar: TPanel
         Left = 7
         Top = 7
-        Width = 112
+        Width = 97
         Height = 40
         BevelKind = bkFlat
         BevelOuter = bvNone
         Caption = 'Gravar <Ins>'
-        Color = clHighlight
+        Color = clSilver
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13
@@ -101,14 +102,14 @@ object FrmCadGrupo: TFrmCadGrupo
         OnMouseLeave = Unt_FuncoesMouseLeave
       end
       object PnlExcluir: TPanel
-        Left = 123
+        Left = 109
         Top = 7
-        Width = 112
+        Width = 97
         Height = 40
         BevelKind = bkFlat
         BevelOuter = bvNone
         Caption = 'Excluir <Del>'
-        Color = clHighlight
+        Color = clSilver
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13
@@ -122,14 +123,14 @@ object FrmCadGrupo: TFrmCadGrupo
         OnMouseLeave = Unt_FuncoesMouseLeave
       end
       object PnlCancelar: TPanel
-        Left = 239
+        Left = 211
         Top = 7
-        Width = 112
+        Width = 95
         Height = 40
         BevelKind = bkFlat
         BevelOuter = bvNone
         Caption = 'Cancelar <Esc>'
-        Color = clHighlight
+        Color = clSilver
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13
@@ -142,14 +143,14 @@ object FrmCadGrupo: TFrmCadGrupo
         OnMouseLeave = Unt_FuncoesMouseLeave
       end
       object PnlSair: TPanel
-        Left = 356
+        Left = 310
         Top = 7
-        Width = 112
+        Width = 95
         Height = 41
         BevelKind = bkFlat
         BevelOuter = bvNone
         Caption = 'Sair <Esc>'
-        Color = clHighlight
+        Color = clSilver
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -13
@@ -177,7 +178,7 @@ object FrmCadGrupo: TFrmCadGrupo
     object EdtNome: TDBEdit
       Left = 67
       Top = 77
-      Width = 392
+      Width = 318
       Height = 21
       DataField = 'NOME_CLASSE'
       DataSource = DtsGrupo
@@ -186,7 +187,7 @@ object FrmCadGrupo: TFrmCadGrupo
     object EdtDescricao: TDBEdit
       Left = 67
       Top = 105
-      Width = 392
+      Width = 318
       Height = 21
       DataField = 'DESCRICAO_CLASSE'
       DataSource = DtsGrupo

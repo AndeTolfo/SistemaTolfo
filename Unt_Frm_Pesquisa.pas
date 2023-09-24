@@ -23,11 +23,12 @@ type
     procedure dbListagemDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
   private
     { Private declarations }
   public
     Cod_Selected : integer;
-    Nome_Cliente : String;
+    Nome : String;
     Tabela : String;
     Class Function New : TFrmPesquisa;
   end;
@@ -46,7 +47,7 @@ begin
   if (Tabela = 'Clientes') then
   begin
     Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_cliente').AsInteger;
-    Nome_Cliente := DtsPesquisa.DataSet.FieldByName('nome_cliente').AsString;
+    Nome := DtsPesquisa.DataSet.FieldByName('nome_cliente').AsString;
     if (Cod_Selected <> 0) then
     begin
         ModalResult := mrOk;
@@ -64,6 +65,7 @@ begin
   else if (Tabela = 'CondicaoPagamento') then
   begin
     Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_formaspg').AsInteger;
+    Nome := DtsPesquisa.DataSet.FieldByName('descricao_formaspg').AsString;
     if (Cod_Selected <> 0) then
     begin
       ModalResult := mrOk;

@@ -22,10 +22,13 @@ type
     procedure FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);
     procedure dbListagemDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
   private
     { Private declarations }
   public
     Cod_Selected : integer;
+    Nome : String;
     Tabela : String;
     Class Function New : TFrmPesquisa;
   end;
@@ -38,9 +41,13 @@ uses Unit_Funcoes, Unt_DM, Unt_FrmRelVendas;
 
 procedure TFrmPesquisa.dbListagemDblClick(Sender: TObject);
 begin
+ //somente deixar clicar se a Qry estiver ativa
+ if QryPesquisa.Active then
+ begin
   if (Tabela = 'Clientes') then
   begin
     Cod_Selected := DtsPesquisa.DataSet.FieldByName('cod_cliente').AsInteger;
+    Nome := DtsPesquisa.DataSet.FieldByName('nome_cliente').AsString;
     if (Cod_Selected <> 0) then
     begin
         ModalResult := mrOk;
@@ -63,12 +70,26 @@ begin
       ModalResult := mrOk;
     end;
   end;
-
+ end;
 end;
 
 procedure TFrmPesquisa.FormCreate(Sender: TObject);
 begin
   Cod_Selected := 0;
+end;
+
+procedure TFrmPesquisa.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = VK_F5 then begin  // Verifica se a tecla pressionada é a tecla F5
+    Key := 0;
+    FrameBtnPadrao1pnlAtualizarClick(sender)
+  end
+else if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
 end;
 
 procedure TFrmPesquisa.FrameBtnPadrao1pnlAtualizarClick(Sender: TObject);

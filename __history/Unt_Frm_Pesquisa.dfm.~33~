@@ -11,8 +11,11 @@ object FrmPesquisa: TFrmPesquisa
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   object pnlContainer: TPanel
@@ -98,32 +101,44 @@ object FrmPesquisa: TFrmPesquisa
         ExplicitLeft = 92
         ExplicitTop = -2
         ExplicitHeight = 53
+        inherited pnlAtualizar: TPanel
+          OnClick = FrameBtnPadrao1pnlAtualizarClick
+          OnMouseLeave = FrameBtnPadrao1pnlAtualizarMouseLeave
+        end
         inherited pnlEditar: TPanel
           Caption = 'Relat'#243'rio'
         end
+        inherited pnlSair: TPanel
+          OnClick = FrameBtnPadrao1pnlSairClick
+        end
       end
     end
-    object DBGrid1: TDBGrid
+    object dbListagem: TDBGrid
       Left = 0
       Top = 49
       Width = 527
       Height = 287
       Align = alClient
+      DataSource = DtsPesquisa
       TabOrder = 2
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
       TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
+      OnDblClick = dbListagemDblClick
     end
   end
   object QryPesquisa: TpFIBDataSet
+    Transaction = DM.TransRead
+    Database = DM.DB
     DefaultFormats.DisplayFormatTime = 'HH:MM'
-    Left = 400
+    Left = 432
     Top = 72
   end
   object DtsPesquisa: TDataSource
-    Left = 344
+    DataSet = QryPesquisa
+    Left = 368
     Top = 72
   end
 end

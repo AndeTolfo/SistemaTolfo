@@ -3,8 +3,9 @@ object DM: TDM
   Height = 324
   Width = 382
   object DB: TpFIBDatabase
-    Connected = True
-    DBName = 'C:\SisComP\Database.fdb'
+    DBName = 
+      'C:\Users\ander\Documents\GitHub\Delphi\SistemaTolfo\Win32\Debug\' +
+      'DataBase\DATABASE.FDB'
     DBParams.Strings = (
       'lc_ctype=WIN1252'
       'user_name=SUPS'

@@ -42,6 +42,7 @@ type
     procedure EdtCodigoExit(Sender: TObject);
     procedure Unt_FuncoesMouseEnter(Sender: TObject);
     procedure Unt_FuncoesMouseLeave(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
 
   private
@@ -51,12 +52,8 @@ type
     function GetCodigo: Integer;
     procedure SetCodigo(const Value: Integer);
   public
-    { Public declarations }
-
     class function New: TFrmCadGrupo;
     procedure Find;
-
-
     property Codigo: Integer read GetCodigo write SetCodigo;
   end;
 
@@ -68,12 +65,12 @@ uses
 {$R *.dfm}
 procedure TFrmCadGrupo.Unt_FuncoesMouseEnter(Sender: TObject);
 begin
-  SetBackgruondBotoes(TPanel(Sender), clHotLight);
+ SetBackgruondBotoes(TPanel(Sender), clHighlight);
 end;
 
 procedure TFrmCadGrupo.Unt_FuncoesMouseLeave(Sender: TObject);
 begin
-  SetBackgruondBotoes(TPanel(Sender), clHighlight);
+    SetBackgruondBotoes(TPanel(Sender), clSilver);
 end;
 
 
@@ -136,6 +133,16 @@ begin
   FCodigo := 0;
 end;
 
+procedure TFrmCadGrupo.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+if Key = VK_ESCAPE then
+  begin
+   key := 0;
+   Close;
+  end;
+end;
+
 procedure TFrmCadGrupo.FormKeyPress(Sender: TObject; var Key: Char);
 begin
   if (Key = #13) then begin
@@ -188,7 +195,6 @@ end;
 
 procedure TFrmCadGrupo.PnlSalvarClick(Sender: TObject);
 var
-    NextId: integer;
   _Transaction: TpFIBTransaction;
 begin
   _Transaction := DM.GetNewTransaction;
@@ -202,7 +208,7 @@ begin
         // Verifica se o valor do campo EdtCodigo é "Automático"
         if EdtCodigo.Text = 'Automático' then
         begin
-
+          QryGrupoCOD_CLASSE.AsInteger := GetNexId('Classes','Cod_classe','',dm.QryGen);
         end
         else
           QryGrupoCOD_CLASSE.AsInteger := StrToInt(EdtCodigo.Text);
@@ -212,13 +218,13 @@ begin
       EdtCodigo.Text := '';
       FCodigo := 0;
       Find;
-    except
+      except
       on E:Exception do begin
         if QryGrupo.UpdateTransaction.InTransaction then QryGrupo.UpdateTransaction.Rollback;
         ShowMessage('Ocorreu um Erro ao Gravar o Grupo!' + #13 + 'Erro: ' + E.Message);
       end;
     end
-  finally
+    finally
     FreeAndNil(_Transaction);
   end;
 end;
